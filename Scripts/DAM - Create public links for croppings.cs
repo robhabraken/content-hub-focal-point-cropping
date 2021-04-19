@@ -29,11 +29,15 @@ var mainFile = JObject.Parse(asset.GetPropertyValue("MainFile").ToString());
 var originalWidth = mainFile["properties"]["width"].ToObject<int>();
 var originalHeight = mainFile["properties"]["height"].ToObject<int>();
 
+var focalPointX = asset.GetPropertyValue<int?>("FocalPointX");
+var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
+
 // configure auto-generated croppings
 var croppings = new Dictionary<string, CroppingDefinition>();
 AddCroppingDefinition(1280, 960);
 AddCroppingDefinition(1280, 430);
 AddCroppingDefinition(320, 100);
+AddCroppingDefinition(400, 600);
 
 void AddCroppingDefinition(int width, int height) {
     var croppingDefinition = new CroppingDefinition(title, width, height);
@@ -98,7 +102,7 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
 
     relation.Parents.Add(assetId);
     
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height, null, null);
+    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
     publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
 
     await MClient.Entities.SaveAsync(publicLink);
@@ -110,37 +114,67 @@ async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
     MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height, null, null);
+    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
     publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
 
     await MClient.Entities.SaveAsync(publicLink);
     return;
 }
 
-JObject BuildConversionConfiguration(int targetWidth, int targetHeight, int? focalPointX, int? focalPointY) {
+// build conversion config json object for desired cropping configuration
+JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
 
     JObject conversionConfig = new JObject();
     conversionConfig["cropping_configuration"] = new JObject();
 
-    if(focalPointX == null || focalPointY == null) {
+    if(focalPointX == null || !focalPointX.HasValue || focalPointY == null || !focalPointY.HasValue) {
 
-        // use smart cropping algorithm if no focal point data is set or available
+        // use smart cropping algorithm if no valid focal point data is set or available
         conversionConfig["cropping_configuration"]["cropping_type"] = "Entropy";
+
+        conversionConfig["cropping_configuration"]["width"] = targetWidth;
+        conversionConfig["cropping_configuration"]["height"] = targetHeight;
 
     } else {
 
+        int offsetX = 0;
+        int offsetY = 0;
+
+        var widthRatio = (double)originalWidth / targetWidth;
+        var heightRatio = (double)originalHeight / targetHeight;
+
+        var relativeWidth = originalWidth;
+        var relativeHeight = originalHeight;
+
+        if(widthRatio > heightRatio) {
+
+            relativeWidth = (int)Math.Round((double)originalHeight / targetHeight * targetWidth);
+            offsetX = Math.Min(Math.Max((int)Math.Round(focalPointX.Value - relativeWidth / 2d), 0), originalWidth - relativeWidth);
+
+        } else if(widthRatio < heightRatio) {
+
+            relativeHeight = (int)Math.Round((double)originalWidth / targetWidth * targetHeight);
+            offsetY = Math.Min(Math.Max((int)Math.Round(focalPointY.Value - relativeHeight / 2d), 0), originalHeight - relativeHeight);
+        }
+
+        MClient.Logger.Info($"top left should be at {offsetX} x {offsetY} px");
+
         conversionConfig["cropping_configuration"]["cropping_type"] = "Custom";
         conversionConfig["cropping_configuration"]["top_left"] = new JObject();
-        conversionConfig["cropping_configuration"]["top_left"]["x"] = 0; // determine based on focal point, yet to retrieve / calculate
-        conversionConfig["cropping_configuration"]["top_left"]["y"] = 0; // determine based on focal point, yet to retrieve / calculate
+        conversionConfig["cropping_configuration"]["top_left"]["x"] = offsetX;
+        conversionConfig["cropping_configuration"]["top_left"]["y"] = offsetY;
 
+        // mind that the cropping configuration dimensions shouldn't per se contain the target dimensions, but the crop area dimensions before resizing
+        // this equals the target dimensions ratio scaled up to the original dimensions, which is calculated above
+        conversionConfig["cropping_configuration"]["width"] = relativeWidth;
+        conversionConfig["cropping_configuration"]["height"] = relativeHeight;
     }
-
-    conversionConfig["cropping_configuration"]["width"] = targetWidth;
-    conversionConfig["cropping_configuration"]["height"] = targetHeight;
 
     conversionConfig["original_width"] = originalWidth;
     conversionConfig["original_height"] = originalHeight;
+
+    conversionConfig["width"] = targetWidth;
+    conversionConfig["height"] = targetHeight;
 
     conversionConfig["ratio"] = new JObject();
     conversionConfig["ratio"]["name"] = "free";
