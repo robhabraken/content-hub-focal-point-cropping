@@ -56,7 +56,7 @@ if (result.TotalNumberOfResults > 0)
         if(croppings.ContainsKey(relativeUrl)) {
 
             // update public link crop configuration for new focal point data
-            await UpdatePublicLink(publicLink);
+            await UpdatePublicLink(publicLink, croppings[relativeUrl]);
 
             // remove cropping definition from the list, since it already has been processed
             croppings.Remove(relativeUrl);
@@ -65,14 +65,14 @@ if (result.TotalNumberOfResults > 0)
 }
 
 // iterate over all cropping definitions that didn't have a public link already and create one
-foreach(var croppingDef in croppings) {
-    await CreatePublicLink("downloadOriginal", assetId.Value, croppingDef.Value.Name);
+foreach(var cropping in croppings) {
+    await CreatePublicLink("downloadOriginal", assetId.Value, cropping.Value);
 }
 
 // create new public link for this asset
-async Task CreatePublicLink(string rendition, long assetId, string name)
+async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Creating public link for asset with ID {assetId}.");
+    MClient.Logger.Info($"Creating public link for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
     var publicLink = await MClient.EntityFactory.CreateAsync("M.PublicLink");
 
@@ -82,7 +82,7 @@ async Task CreatePublicLink(string rendition, long assetId, string name)
     }
 
     publicLink.SetPropertyValue("Resource", rendition);
-    publicLink.SetPropertyValue("RelativeUrl", name);
+    publicLink.SetPropertyValue("RelativeUrl", crop.Name);
 
     var relation = publicLink.GetRelation<IChildToManyParentsRelation>("AssetToPublicLink");
     if (relation == null)
@@ -98,9 +98,9 @@ async Task CreatePublicLink(string rendition, long assetId, string name)
 }
 
 // update existing public link for this asset
-async Task UpdatePublicLink(IEntity publicLink)
+async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId}.");
+    MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
     await MClient.Entities.SaveAsync(publicLink);
     return;
