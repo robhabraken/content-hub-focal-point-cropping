@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 struct CroppingDefinition {
 
@@ -23,6 +24,10 @@ struct CroppingDefinition {
 var assetId = Context.TargetId;
 var asset = await MClient.Entities.GetAsync(assetId.Value);
 var title = asset.GetPropertyValue("Title").ToString();
+
+var mainFile = JObject.Parse(asset.GetPropertyValue("MainFile").ToString());
+var originalWidth = mainFile["properties"]["width"].ToObject<int>();
+var originalHeight = mainFile["properties"]["height"].ToObject<int>();
 
 // configure auto-generated croppings
 var croppings = new Dictionary<string, CroppingDefinition>();
@@ -92,6 +97,9 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
     }
 
     relation.Parents.Add(assetId);
+    
+    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height, null, null);
+    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
 
     await MClient.Entities.SaveAsync(publicLink);
     return;
@@ -102,6 +110,40 @@ async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
     MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
+    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height, null, null);
+    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+
     await MClient.Entities.SaveAsync(publicLink);
     return;
+}
+
+JObject BuildConversionConfiguration(int targetWidth, int targetHeight, int? focalPointX, int? focalPointY) {
+
+    JObject conversionConfig = new JObject();
+    conversionConfig["cropping_configuration"] = new JObject();
+
+    if(focalPointX == null || focalPointY == null) {
+
+        // use smart cropping algorithm if no focal point data is set or available
+        conversionConfig["cropping_configuration"]["cropping_type"] = "Entropy";
+
+    } else {
+
+        conversionConfig["cropping_configuration"]["cropping_type"] = "Custom";
+        conversionConfig["cropping_configuration"]["top_left"] = new JObject();
+        conversionConfig["cropping_configuration"]["top_left"]["x"] = 0; // determine based on focal point, yet to retrieve / calculate
+        conversionConfig["cropping_configuration"]["top_left"]["y"] = 0; // determine based on focal point, yet to retrieve / calculate
+
+    }
+
+    conversionConfig["cropping_configuration"]["width"] = targetWidth;
+    conversionConfig["cropping_configuration"]["height"] = targetHeight;
+
+    conversionConfig["original_width"] = originalWidth;
+    conversionConfig["original_height"] = originalHeight;
+
+    conversionConfig["ratio"] = new JObject();
+    conversionConfig["ratio"]["name"] = "free";
+
+    return conversionConfig;
 }
