@@ -1,4 +1,4 @@
-# Content Hub Focal point cropping
+# Content Hub - Focal point cropping
 
 This Content Hub extension relies on the *Internal integration* principle meaning that the custom business logic is configured inside Content Hub and the accompanying scripts are managed, built and run from the Content Hub servers. No additional applications are required, but you need to add some custom configuration to your Content Hub instance via the `Manage` button in the top right corner:
 
