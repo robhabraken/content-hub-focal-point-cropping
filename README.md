@@ -71,3 +71,6 @@ Go to *Pages* and select the *Asset detail* page. We are going to replate the *E
 
 `Save and close` the newly added component and go to an asset to verify correct placement.
 
+#### Optional: Show focal point details
+
+This step isn't required as it isn't a functional part of the extension, but it does give some useful feedback on the focal point selection process if you like. Still on the *Asset detail* page of the *Pages* section, go to the Details component on the top of the second column (assuming a default Content Hub configuration). Toggle on the *Focal point* member group selection on the left side of the screen, select "White panel with shadow" as your Skin of choice and set both members on `Not editable`. After that you can `Save` the new *Details* component settings.
