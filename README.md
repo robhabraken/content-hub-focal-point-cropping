@@ -18,6 +18,8 @@ And another member following the same procedure with the properties:
 
 * Name: FocalPointY
 
+Click `Publish` to publish the new schema for your assets.
+
 ### Scripts
 
 Create a new *Script* with the following properties:
