@@ -32,7 +32,7 @@ var originalHeight = mainFile["properties"]["height"].ToObject<int>();
 var focalPointX = asset.GetPropertyValue<int?>("FocalPointX");
 var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
 
-// configure auto-generated croppings
+// configure auto-generated croppings (currently still managed in here, could be derived from renditions or other source)
 var croppings = new Dictionary<string, CroppingDefinition>();
 AddCroppingDefinition(1280, 960);
 AddCroppingDefinition(1280, 430);
