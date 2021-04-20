@@ -12,11 +12,13 @@ Go the the  *Schema* of `M.Asset` and add a `New group` with the following prope
 Add a `New member`, `select` the member type *property* and from the dropdown select the `Integer` *data type* with the properties:
 
 * Name: FocalPointX
+* Label: Focal point X-axis coordinate
 * You can leave the rest of the properties default
 
 And another member following the same procedure with the properties:
 
 * Name: FocalPointY
+* Label: Focal point Y-axis coordinate
 
 Click `Publish` to publish the new schema for your assets.
 
