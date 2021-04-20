@@ -31,7 +31,7 @@ Create a new *Script* with the following properties:
 
 Go to the Script editor by clicking `Edit` on the newly created Script entity and paste the code from the file 
 
-[Script/DAM - Create public links for croppings.cs]: Script/DAM - Create public links for croppings.cs
+[Script/DAM - Create public links for croppings.cs](Script/DAM - Create public links for croppings.cs)
 
  into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` button and enable the Script by toggling the `Enable control` slide on.
 
@@ -60,4 +60,14 @@ Create a new *Trigger* with the following properties:
   * Add action DAM - Create public links for croppings
 
 `Save and close` the trigger and click `Activate`.
+
+### External page components
+
+Go to *Pages* and select the *Asset detail* page. We are going to replate the *Entity image viewer* with a new component called the *Focal point viewer*. Go to `Settings` of the *Entity image viewer* in Column 1 of the Main Zone and toggle the `Visible` slide off to hide the original component. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and toggle the component `Visible`. Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the property as following:
+
+* Control name: Custom.Controls.FocalPointViewer
+* Code: [External page components/Focal point viewer.js](External page components/Focal point viewer.js)
+* Template: [External page components/Focal point viewer.html](External page components/Focal point viewer.html)
+
+`Save and close` the newly added component and go to an asset to verify correct placement.
 
