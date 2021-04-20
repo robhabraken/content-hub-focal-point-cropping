@@ -11,28 +11,17 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 });
 
 FocalPointsExtension = function () {
-    this._entity = null;
-    this._options = null;
+    this._focalPoint = {};
+    this._focalPointRadius = 20;
 
-    this._previewImage = null;
-
-    this._focalCanvas = null;
-    this._ctx = null;
-    this._selection = {};
     this._drag = false;
     this._remove = false;
 
-    this._item = {};
-    this._ratioX = null;
-    this._ratioY = null;
-
-    this._dataBoundDelegate = null;
-
-    this._focalCanvasMouseLeaveDelegate = null;
-    this._focalCanvasMouseDownDelegate = null;
-    this._focalCanvasMouseUpDelegate = null;
-    this._focalCanvasMouseMoveDelegate = null;
     this._previewImageLoadedDelegate = null;
+    this._focalCanvasMouseDownDelegate = null;
+    this._focalCanvasMouseMoveDelegate = null;
+    this._focalCanvasMouseUpDelegate = null;
+    this._focalCanvasMouseLeaveDelegate = null;
 }
 
 FocalPointsExtension.prototype = {
@@ -57,11 +46,11 @@ FocalPointsExtension.prototype = {
         this._focalCanvasMouseDownDelegate = this._focalCanvasMouseDown.bind(this);
         this._focalCanvas.addEventListener("mousedown", this._focalCanvasMouseDownDelegate);
 
-        this._focalCanvasMouseUpDelegate = this._focalCanvasMouseUp.bind(this);
-        this._focalCanvas.addEventListener("mouseup", this._focalCanvasMouseUpDelegate);
-
         this._focalCanvasMouseMoveDelegate = this._focalCanvasMouseMove.bind(this);
         this._focalCanvas.addEventListener("mousemove", this._focalCanvasMouseMoveDelegate);
+
+        this._focalCanvasMouseUpDelegate = this._focalCanvasMouseUp.bind(this);
+        this._focalCanvas.addEventListener("mouseup", this._focalCanvasMouseUpDelegate);
 
         this._focalCanvasMouseLeaveDelegate = this._focalCanvasMouseLeave.bind(this);
         this._focalCanvas.addEventListener("mouseleave", this._focalCanvasMouseLeaveDelegate);
@@ -70,32 +59,30 @@ FocalPointsExtension.prototype = {
     },
 
     dispose: function () {
-        if (this._dataBoundDelegate) {
-            delete this._dataBoundDelegate;
-        }
-        if (this._focalCanvasMouseLeaveDelegate) {
-            delete this._focalCanvasMouseLeaveDelegate;
+        if (this._previewImageLoadedDelegate) {
+            delete this._previewImageLoadedDelegate;
         }
         if (this._focalCanvasMouseDownDelegate) {
             delete this._focalCanvasMouseDownDelegate;
         }
-        if (this._focalCanvasMouseUpDelegate) {
-            delete this._focalCanvasMouseUpDelegate;
-        }
         if (this._focalCanvasMouseMoveDelegate) {
             delete this._focalCanvasMouseMoveDelegate;
         }
-        if (this._previewImageLoadedDelegate) {
-            delete this._previewImageLoadedDelegate;
+        if (this._focalCanvasMouseUpDelegate) {
+            delete this._focalCanvasMouseUpDelegate;
+        }
+        if (this._focalCanvasMouseLeaveDelegate) {
+            delete this._focalCanvasMouseLeaveDelegate;
         }
 
         if (this._previewImage) {
             this._previewImage.removeEventListener("load", this._previewImageLoadedDelegate);
         }
+
         if (this._focalCanvas) {
             this._focalCanvas.removeEventListener("mousedown", this._focalCanvasMouseDownDelegate);
-            this._focalCanvas.removeEventListener("mouseup", this._focalCanvasMouseUpDelegate);
             this._focalCanvas.removeEventListener("mousemove", this._focalCanvasMouseMoveDelegate);
+            this._focalCanvas.removeEventListener("mouseup", this._focalCanvasMouseUpDelegate);
             this._focalCanvas.removeEventListener("mouseleave", this._focalCanvasMouseLeaveDelegate);
         }
     },
@@ -110,8 +97,8 @@ FocalPointsExtension.prototype = {
         this._focalCanvas.height = this._previewImage.height;
 
         if (this._item.properties['FocalPointX']() !== null && this._item.properties['FocalPointX']() != 0 && this._item.properties['FocalPointY']() !== null && this._item.properties['FocalPointY']() != 0) {
-            this._selection.startX = this._item.properties['FocalPointX']() / this._ratio;
-            this._selection.startY = this._item.properties['FocalPointY']() / this._ratio;
+            this._focalPoint.x = this._item.properties['FocalPointX']() / this._ratio;
+            this._focalPoint.y = this._item.properties['FocalPointY']() / this._ratio;
 
             this._draw();
         }
@@ -120,41 +107,19 @@ FocalPointsExtension.prototype = {
     _focalCanvasMouseDown: function (sender, args) {
         var x = sender.offsetX,
             y = sender.offsetY;
+
+        // if cursor is over focal point marker, assume remove (unless started dragging later on)
         if (this._item.properties['FocalPointX']() > 0 && this._item.properties['FocalPointY']() > 0) {
-            if (this._isPointInFocalPointMarker(x, y)) {              
+            if (x >= this._focalPoint.x - this._focalPointRadius
+                && x <= this._focalPoint.x + this._focalPointRadius
+                && y >= this._focalPoint.y - this._focalPointRadius
+                && y <= this._focalPoint.y + this._focalPointRadius) {
                 this._remove = true;
-                //return;
             }
         }
 
         this._beginSelection(x, y);
-
         event.preventDefault();
-    },
-
-    _focalCanvasMouseLeave: function (sender, args) {
-        if (this._drag) {
-            this._endSelection(sender);
-        }
-    },
-
-    _focalCanvasMouseUp: function (sender, args) {
-        if(!this._remove) {
-            this._endSelection(sender);
-        } else {
-            this._removeFocalPoint();
-        }
-    },
-
-    _removeFocalPoint: function() {
-        this._selection = {};
-        this._clear();
-
-        this._setFocalPoint(0, 0);
-        this._item.save();
-
-        this._drag = false;
-        this._remove = false;
     },
 
     _focalCanvasMouseMove: function (sender, args) {
@@ -163,26 +128,33 @@ FocalPointsExtension.prototype = {
             // if clicked and started dragging, user is picking up focal point, not clicking to remove
             this._remove = false;
 
-            this._selection.startX = sender.offsetX;
-            this._selection.startY = sender.offsetY;
-
+            // update focal point and marker while dragging
+            this._focalPoint.x = sender.offsetX;
+            this._focalPoint.y = sender.offsetY;
             this._draw();
         }
     },
 
-    _setFocalPoint: function (x, y) {
-        // keep focal point within bounding box of image dimensions
-        // to avoid an off image focal point (possible when quickly dragging mouse off canvas)
-        x = Math.max(Math.min(x, this._itemWidth), 0);
-        y = Math.max(Math.min(y, this._itemHeight), 0);
+    _focalCanvasMouseUp: function (sender, args) {
+        if(this._remove) {
+            // focal point marker clicked without moving (dragging), so remove the focal point
+            this._removeFocalPoint();
+        } else {
+            // focal point either added or dragged, mouse up determines final position, so process the new focal point location
+            this._endSelection(sender);
+        }
+    },
 
-        this._item.properties.FocalPointX(x);
-        this._item.properties.FocalPointY(y);
+    _focalCanvasMouseLeave: function (sender, args) {
+        if (this._drag) {
+            // when leaving the canvas while dragging, assume final position
+            this._endSelection(sender);
+        }
     },
 
     _beginSelection: function (x, y) {
-        this._selection.startX = x;
-        this._selection.startY = y;
+        this._focalPoint.x = x;
+        this._focalPoint.y = y;
         this._drag = true;
     },
 
@@ -192,34 +164,34 @@ FocalPointsExtension.prototype = {
         var x = sender.offsetX,
             y = sender.offsetY;
 
-        this._selection.startX = x;
-        this._selection.startY = y;
+        this._focalPoint.x = x;
+        this._focalPoint.y = y;
 
-        var x = Math.ceil(this._selection.startX * this._ratio),
-            y = Math.ceil(this._selection.startY * this._ratio);
+        var x = Math.ceil(this._focalPoint.x * this._ratio),
+            y = Math.ceil(this._focalPoint.y * this._ratio);
 
         this._setFocalPoint(x, y);
         this._draw();
+    },
 
+    _setFocalPoint: function (x, y) {
+        // keep focal point within bounding box of image dimensions in case of dragging cursor off canvas
+        x = Math.max(Math.min(x, this._itemWidth), 0);
+        y = Math.max(Math.min(y, this._itemHeight), 0);
+
+        // store the focal point coordinates on the asset
+        this._item.properties.FocalPointX(x);
+        this._item.properties.FocalPointY(y);
         this._item.save();
     },
 
-    _isPointInFocalPointMarker: function (x, y) {
-        var isCollision = false;
+    _removeFocalPoint: function() {
+        this._drag = false;
+        this._remove = false;
 
-
-        var left = this._selection.startX - 20,
-            right = this._selection.startX + 20;
-        var top = this._selection.startY - 20,
-            bottom = this._selection.startY + 20;
-        if (right >= x
-            && left <= x
-            && bottom >= y
-            && top <= y) {
-            isCollision = true;
-        }
-
-        return isCollision;
+        this._focalPoint = {};
+        this._setFocalPoint(0, 0);
+        this._clear();
     },
 
     _clear: function () {
@@ -229,19 +201,20 @@ FocalPointsExtension.prototype = {
     _draw: function () {
         this._clear();
         
+        // draws the small white outer ring for contrast
         this._ctx.beginPath();
-        this._ctx.arc(this._selection.startX, this._selection.startY, 21, 0, 2 * Math.PI, false);
+        this._ctx.arc(this._focalPoint.x, this._focalPoint.y, this._focalPointRadius + 1, 0, 2 * Math.PI, false);
         this._ctx.strokeStyle = 'rgba(255,255,255,1)';
         this._ctx.lineWidth = 1;
         this._ctx.stroke();
 
+        // draws the main see-through marker with (customizable) outline color
         this._ctx.beginPath();
-        this._ctx.arc(this._selection.startX, this._selection.startY, 20, 0, 2 * Math.PI, false);
+        this._ctx.arc(this._focalPoint.x, this._focalPoint.y, this._focalPointRadius, 0, 2 * Math.PI, false);
         this._ctx.strokeStyle = 'rgba(255,0,0,0.5)';
         this._ctx.fillStyle = 'rgba(255,255,255,0.5)';
         this._ctx.lineWidth = 2;
         this._ctx.fill();
         this._ctx.stroke();
-
     }
 }
