@@ -31,7 +31,7 @@ Create a new *Script* with the following properties:
 
 Go to the Script editor by clicking `Edit` on the newly created Script entity and paste the code from the file 
 
-[Script/DAM - Create public links for croppings.cs](Script/DAM%20-%20Create%20public%20links%20for%20croppings.cs)
+[Scripts/DAM - Create public links for croppings.cs](Scripts/DAM%20-%20Create%20public%20links%20for%20croppings.cs)
 
  into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` button and enable the Script by toggling the `Enable control` slide on.
 
