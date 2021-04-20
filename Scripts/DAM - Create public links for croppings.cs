@@ -127,7 +127,9 @@ JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
     JObject conversionConfig = new JObject();
     conversionConfig["cropping_configuration"] = new JObject();
 
-    if(focalPointX == null || !focalPointX.HasValue || focalPointY == null || !focalPointY.HasValue) {
+    if(focalPointX == null || !focalPointX.HasValue ||
+        focalPointY == null || !focalPointY.HasValue ||
+        (focalPointX.Value == 0 && focalPointY.Value == 0)) {
 
         // use smart cropping algorithm if no valid focal point data is set or available
         conversionConfig["cropping_configuration"]["cropping_type"] = "Entropy";
