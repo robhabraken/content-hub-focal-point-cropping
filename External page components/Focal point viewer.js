@@ -110,10 +110,7 @@ FocalPointsExtension.prototype = {
 
         // if cursor is over focal point marker, assume remove (unless started dragging later on)
         if (this._item.properties['FocalPointX']() > 0 && this._item.properties['FocalPointY']() > 0) {
-            if (x >= this._focalPoint.x - this._focalPointRadius
-                && x <= this._focalPoint.x + this._focalPointRadius
-                && y >= this._focalPoint.y - this._focalPointRadius
-                && y <= this._focalPoint.y + this._focalPointRadius) {
+            if (this._cursorIsInFocalPointMarker(x, y)) {
                 this._remove = true;
             }
         }
@@ -150,6 +147,22 @@ FocalPointsExtension.prototype = {
             // when leaving the canvas while dragging, assume final position
             this._endSelection(sender);
         }
+    },
+
+    _cursorIsInFocalPointMarker: function (x, y) {
+        var isCollision = false;
+        var offset = this._focalPointRadius;
+
+        var left = this._focalPoint.x - offset,
+            right = this._focalPoint.x + offset,
+            top = this._focalPoint.y - offset,
+            bottom = this._focalPoint.y + offset;
+
+        if (x >= left && x <= right && y >= top && y <= bottom) {
+            isCollision = true;
+        }
+
+        return isCollision;
     },
 
     _beginSelection: function (x, y) {
