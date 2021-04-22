@@ -48,7 +48,7 @@ PublicLinkOverview.prototype = {
                                 
                                 // the thumbnail is displayed using a transformation to avoid loading large images
                                 // to ensure the public link thumbnail isn't cached, we add a random value to the image source
-                                publicLink += "&t=thumbnail&r=" + Math.random();
+                                var thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
 
                                 var title = publicLinkData["properties"]["RelativeUrl"];
                                 var rendition = publicLinkData["properties"]["Resource"];
@@ -72,7 +72,7 @@ PublicLinkOverview.prototype = {
                                     croppingType = "Original resolution of " + rendition + " rendition";
                                 }
 
-                                var context = {title: title, href: publicLink, width: width, height: height, croppingType: croppingType};
+                                var context = {title: title, href: publicLink, preview: thumbnail, width: width, height: height, croppingType: croppingType};
                                 var html = template(context);
                                 document.getElementById("publicLinkList").innerHTML += html;
                             }
