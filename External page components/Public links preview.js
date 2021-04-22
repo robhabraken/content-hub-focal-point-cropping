@@ -32,7 +32,6 @@ PublicLinkOverview.prototype = {
         var rawJSON = JSON.stringify(this._item);
         var entityObject = JSON.parse(rawJSON);
         var assetId = entityObject["id"];
-        console.log(rawJSON);
 
         // parse AssetToPublicLink data to retrieve the entity IDs of the public links of this asset
         $.getJSON("https://playground.stylelabs.io/api/entities/" + assetId + "/relations/AssetToPublicLink", function(data) { 
