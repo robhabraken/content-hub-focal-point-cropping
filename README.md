@@ -65,15 +65,36 @@ Create a new *Trigger* with the following properties:
 
 `Save and close` the trigger and click `Activate`.
 
+### Transformations
+
+Create a new *Transformation* with the following properties:
+
+* Name: thumbnail
+* Crop: None
+* Width (px): 100
+* Height (px): 100
+* Quality: medium quality
+
+This transformation will be used to display the public link thumbnails in the public link preview external page component.
+
 ### External page components
 
-Go to *Pages* and select the *Asset detail* page. We are going to replate the *Entity image viewer* with a new component called the *Focal point viewer*. Go to `Settings` of the *Entity image viewer* in Column 1 of the Main Zone and toggle the `Visible` slide off to hide the original component. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and toggle the component `Visible`. Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the property as following:
+Go to *Pages* and select the *Asset detail* page. We are going to replace the *Entity image viewer* with a new component called the *Focal point viewer*. Go to `Settings` of the *Entity image viewer* in Column 1 of the Main Zone and toggle the `Visible` slide off to hide the original component. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and toggle the component `Visible`. Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the properties as following:
 
 * Control name: Custom.Controls.FocalPointViewer
 * Code: [External page components/Focal point viewer.js](External%20page%20components/Focal%20point%20viewer.js)
 * Template: [External page components/Focal point viewer.html](External%20page%20components/Focal%20point%20viewer.html)
 
-`Save and close` the newly added component and go to an asset to verify correct placement.
+`Save and close` the newly added component.
+
+Add another component by clicking the plus sign within a column to your likings, for example on hte bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. Configure the properties as following:
+
+* Control name: Custom.Controls.PublicLinksPreview
+* Resources: https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js
+* Code: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
+* Template: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
+
+Save and close the newly added component and go to an asset to verify correct placement of both new components.
 
 #### Optional: Show focal point details
 
