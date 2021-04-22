@@ -1,10 +1,13 @@
 var self = this;
 self.plo = null;
 
+var source   = document.getElementById("listItemTemplate").innerHTML;
+var template = Handlebars.compile(source);
+
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
     if(self.plo == null) {
         self.plo = new PublicLinkOverview();
-        self.plo.initialize(entity);
+        self.plo.initialize(entity, template);
     }
 });
 
@@ -17,23 +20,19 @@ PublicLinkOverview = function () {
 }
 
 PublicLinkOverview.prototype = {
-    initialize: function (entity) {
+    initialize: function (entity, template) {
         this._item = entity;
-        this._test = 5;
-
-        this._getPublicLinkList();        
+        this._renderPublicLinkList(template);        
     },
 
     dispose: function () {
-
     },
 
-    _getPublicLinkList: function () {
+    _renderPublicLinkList: function (template) {
         var rawJSON = JSON.stringify(this._item);
         var entityObject = JSON.parse(rawJSON);
         var assetId = entityObject["id"];
-
-        document.getElementById("publicLinksPreviewGrid").innerHTML = "";
+        console.log(rawJSON);
 
         // parse AssetToPublicLink data to retrieve the entity IDs of the public links of this asset
         $.getJSON("https://playground.stylelabs.io/api/entities/" + assetId + "/relations/AssetToPublicLink", function(data) { 
@@ -47,11 +46,36 @@ PublicLinkOverview.prototype = {
                         $.getJSON(publicLinkAssetHref, function(publicLinkData) { 
                             var publicLink = publicLinkData["public_link"];
                             if (publicLink && publicLink !== "") {
-
+                                
                                 // the thumbnail is displayed using a transformation to avoid loading large images
                                 // to ensure the public link thumbnail isn't cached, we add a random value to the image source
-                                var html = "<div style='height:160px;'><img src='" + publicLink + "&t=thumbnail&r=" + Math.random() + "' width='50%' /><div class='micro-copy no-margin-bottom'>000 x 000 px</div></div>";
-                                document.getElementById("publicLinksPreviewGrid").innerHTML += html;
+                                publicLink += "&t=thumbnail&r=" + Math.random();
+
+                                var title = publicLinkData["properties"]["RelativeUrl"];
+                                var rendition = publicLinkData["properties"]["Resource"];
+                                var width = "";
+                                var height = "";
+
+                                var croppingType = null;
+                                if (publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
+                                    croppingType = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["cropping_type"];
+                                    width = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["width"];
+                                height = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["height"];
+                                }
+
+                                if (croppingType === "Entropy") {
+                                    croppingType = "Smart crop";
+                                } else if (croppingType === "Custom") {
+                                    croppingType = "Custom crop";
+                                } else if (croppingType === "CentralFocalPoint") {
+                                    croppingType = "Crop to center";
+                                } else {
+                                    croppingType = "Original resolution of " + rendition + " rendition";
+                                }
+
+                                var context = {title: title, href: publicLink, width: width, height: height, croppingType: croppingType};
+                                var html = template(context);
+                                document.getElementById("publicLinkList").innerHTML += html;
                             }
                         });
 
