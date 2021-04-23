@@ -28,6 +28,12 @@ var title = asset.GetPropertyValue("Title").ToString();
 var mainFile = JObject.Parse(asset.GetPropertyValue("MainFile").ToString());
 var originalWidth = mainFile["properties"]["width"].ToObject<int>();
 var originalHeight = mainFile["properties"]["height"].ToObject<int>();
+var assetMediaType = mainFile["properties"]["group"].ToObject<string>();
+
+// other media types like Videos, Vectors and Documents cannot be cropped
+if (!assetMediaType.Equals("Images")) {
+    return;
+}
 
 var focalPointX = asset.GetPropertyValue<int?>("FocalPointX");
 var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
