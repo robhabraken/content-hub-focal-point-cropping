@@ -77,6 +77,33 @@ Create a new *Transformation* with the following properties:
 
 This transformation will be used to display the public link thumbnails in the public link preview external page component.
 
+### Media processing
+
+To allow for resizing and cropping of Vector images we need to generate a bitmap version (rendition) of the asset once it is uploaded. Go to *Media processing* and click on the `Content` section on your left. Then, click the `Edit` icon for the *Vectors* flow.
+
+Click on the large plus sign at the beginning of the flow to add a new task and select `Convert image`. Use the following parameters:
+
+* Parameters
+  * Name: bitmap_for_web
+  * Content type: image/png
+  * Content disposition: Inline
+  * Resize option: Do not resize
+  * Target extension: png
+  * Color profile: sRGB default
+  * Density (DPI): 72
+* Outputs
+  * Store output: toggle on
+  * Output name: bitmap_for_web
+  * Property: Renditions
+  * Alternative files: toggle on
+* Rendition link (Click `New link`)
+  * Label: Bitmap for web
+  * Intent: Download
+  * Required permissions: Read
+  * Intended area of use: Download, Public links
+
+Click `Save task` on the bottom of the screen, than `Save` in the upper right corner. `Close` this flow to go back to the *Media processing* overview and click `Publish` to activate your changes. If you want to run this media processing flow for existing content you should also go to the *Assets* overview, select all applicable assets and click `Refresh conditions` under the fly out menu with the three little dots in the upper right corner. Newly uploaded assets will automatically be processed using this new configuration.
+
 ### External page components
 
 Go to *Pages* and select the *Asset detail* page. We are going to replace the *Entity image viewer* with a new component called the *Focal point viewer*. Go to `Settings` of the *Entity image viewer* in Column 1 of the Main Zone and toggle the `Visible` slide off to hide the original component. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and toggle the component `Visible`. Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the properties as following:
