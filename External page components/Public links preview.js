@@ -58,8 +58,14 @@ PublicLinkOverview.prototype = {
                                 var croppingType = null;
                                 if (publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
                                     croppingType = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["cropping_type"];
-                                    width = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["width"];
-                                height = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["height"];
+                                    width = publicLinkData["properties"]["ConversionConfiguration"]["width"];
+                                    height = publicLinkData["properties"]["ConversionConfiguration"]["height"];
+
+                                    // depending on the way of cropping, the width and height are stored in different objects
+                                    if (!width || width == null) {
+                                        width = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["width"];
+                                        height = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["height"];
+                                    }
                                 }
 
                                 if (croppingType === "Entropy") {
