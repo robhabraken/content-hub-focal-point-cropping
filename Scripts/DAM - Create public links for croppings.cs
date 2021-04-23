@@ -25,20 +25,41 @@ var assetId = Context.TargetId;
 var asset = await MClient.Entities.GetAsync(assetId.Value);
 var title = asset.GetPropertyValue("Title").ToString();
 
+var renditionResource = "downloadOriginal";
+
 var mainFile = JObject.Parse(asset.GetPropertyValue("MainFile").ToString());
 var originalWidth = mainFile["properties"]["width"].ToObject<int>();
 var originalHeight = mainFile["properties"]["height"].ToObject<int>();
 var assetMediaType = mainFile["properties"]["group"].ToObject<string>();
+var scaleFactor = 1d;
 
-// other media types like Videos, Vectors and Documents cannot be cropped
-if (!assetMediaType.Equals("Images")) {
+if (assetMediaType.Equals("Vectors")) {
+    
+    // switch to another rendition resource for vector images, as the original file cannot be cropped
+    // this rendition should be configured in the media processing flow for vector images for this script to work
+    renditionResource = "bitmap_for_web";
+
+    var mainFileWidth = originalWidth;
+    
+    // the bitmap rendition might have different dimension than the original main file (vector of 300 dpi vs bitmap of 72 dpi)
+    // hence, when switching renditions, also retrieve the dimensions from that specific rendition
+    var renditions = JObject.Parse(asset.GetPropertyValue("Renditions").ToString());
+    originalWidth = renditions[renditionResource]["properties"]["width"].ToObject<int>();
+    originalHeight = renditions[renditionResource]["properties"]["height"].ToObject<int>();
+
+    // determine scale factor of rendition for focal point scaling
+    scaleFactor = (double)originalWidth / mainFileWidth;
+
+} else if (!assetMediaType.Equals("Images")) {
+
+    // other media types like Videos and Documents should not be cropped
     return;
 }
 
 var focalPointX = asset.GetPropertyValue<int?>("FocalPointX");
 var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
 
-// configure auto-generated croppings (currently still managed in here, could be derived from renditions or other source)
+// configure auto-generated croppings
 var croppings = new Dictionary<string, CroppingDefinition>();
 AddCroppingDefinition(1280, 960);
 AddCroppingDefinition(1280, 430);
@@ -54,7 +75,7 @@ void AddCroppingDefinition(int width, int height) {
 var query = Query.CreateQuery(entities => from e in entities
                                             where e.DefinitionName == "M.PublicLink"
                                             && e.Parent("AssetToPublicLink") == assetId.Value
-                                            && e.Property("Resource") == "downloadOriginal"
+                                            && e.Property("Resource") == renditionResource
                                             && e.Property("IsDisabled") == false
                                             select e);
 
@@ -81,7 +102,7 @@ if (result.TotalNumberOfResults > 0)
 
 // iterate over all cropping definitions that didn't have a public link already and create one
 foreach(var cropping in croppings) {
-    await CreatePublicLink("downloadOriginal", assetId.Value, cropping.Value);
+    await CreatePublicLink(renditionResource, assetId.Value, cropping.Value);
 }
 
 // create new public link for this asset
@@ -157,12 +178,12 @@ JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
         if(widthRatio > heightRatio) {
 
             relativeWidth = (int)Math.Round((double)originalHeight / targetHeight * targetWidth);
-            offsetX = Math.Min(Math.Max((int)Math.Round(focalPointX.Value - relativeWidth / 2d), 0), originalWidth - relativeWidth);
+            offsetX = Math.Min(Math.Max((int)Math.Round((focalPointX.Value * scaleFactor) - relativeWidth / 2d), 0), originalWidth - relativeWidth);
 
         } else if(widthRatio < heightRatio) {
 
             relativeHeight = (int)Math.Round((double)originalWidth / targetWidth * targetHeight);
-            offsetY = Math.Min(Math.Max((int)Math.Round(focalPointY.Value - relativeHeight / 2d), 0), originalHeight - relativeHeight);
+            offsetY = Math.Min(Math.Max((int)Math.Round((focalPointY.Value * scaleFactor) - relativeHeight / 2d), 0), originalHeight - relativeHeight);
         }
 
         conversionConfig["cropping_configuration"]["cropping_type"] = "Custom";
