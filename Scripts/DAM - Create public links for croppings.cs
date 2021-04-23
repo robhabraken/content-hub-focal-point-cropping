@@ -165,8 +165,6 @@ JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
             offsetY = Math.Min(Math.Max((int)Math.Round(focalPointY.Value - relativeHeight / 2d), 0), originalHeight - relativeHeight);
         }
 
-        MClient.Logger.Info($"top left should be at {offsetX} x {offsetY} px");
-
         conversionConfig["cropping_configuration"]["cropping_type"] = "Custom";
         conversionConfig["cropping_configuration"]["top_left"] = new JObject();
         conversionConfig["cropping_configuration"]["top_left"]["x"] = offsetX;
