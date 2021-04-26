@@ -123,7 +123,7 @@ PublicLinkOverview.prototype = {
                                 } else if (croppingType === "CentralFocalPoint") {
                                     croppingType = "Crop to center";
                                 } else {
-                                    croppingType = "Original dimensions of " + rendition + " rendition";
+                                    croppingType = "Uncropped";
                                 }
 
                                 var context = {title: title, href: publicLink, preview: thumbnail, rendition: rendition, width: width, height: height, croppingType: croppingType};
