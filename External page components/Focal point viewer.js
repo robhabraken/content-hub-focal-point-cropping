@@ -27,6 +27,14 @@ FocalPointsExtension = function () {
 FocalPointsExtension.prototype = {
     initialize: function (entity) {
         this._item = entity;
+
+        // MainFile not yet available, display placeholder
+        if (!this._item.properties["MainFile"]().properties) {
+            document.getElementById("imagePlaceholder").style.display = "block";
+            $('#focalPointViewer').remove();
+            return;
+        }
+
         this._itemWidth = this._item.properties["MainFile"]().properties.width;
         this._itemHeight = this._item.properties["MainFile"]().properties.height;
 
@@ -38,6 +46,8 @@ FocalPointsExtension.prototype = {
 
         $(this._previewImage).wrap("<div id='focalPointContainer' style='display:inline-block;position:relative;'></div>");
         $('<canvas id="focalCanvas" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:20;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;"></canvas>').appendTo('#focalPointContainer');
+
+        $('#imagePlaceholder').remove();
 
         this._focalCanvas = $('#focalCanvas')[0];
 
