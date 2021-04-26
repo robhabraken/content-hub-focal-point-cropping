@@ -1,10 +1,28 @@
 var self = this;
 self.fp = null;
 
+var resizing = false;
+
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
     self.fp = new FocalPointsExtension();
     self.fp.initialize(entity);
 });
+
+window.addEventListener('resize', function(event) {
+    if (!resizing) {
+        resizing = true;
+
+        // limit the amount of resize events by handling one every half a second
+        setTimeout(() => {
+            resizing = false;
+
+            // if the window is resized, the preview image has a different dimension,
+            // requiring us to recalculate the ratio and redraw the focal point in the correct dimensions
+            // otherwise the mouse events wouldn't be bound to the correct relative location within the image
+            self.fp._previewImageLoaded();
+        }, 50);
+    }
+}, true);
 
 var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", function (entity) {
     self.fp.dispose();
