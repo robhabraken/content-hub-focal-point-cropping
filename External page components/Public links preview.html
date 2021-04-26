@@ -9,6 +9,24 @@
         text-decoration: none;
     }
 </style>
+<template id="headerTemplate" type="text/x-handlebars-template">
+    <div class="data-filter">
+        <button id="refreshPublicLinksPreview" type="button" class="margin-right-default btn btn-refresh btn-default" title="Refresh" aria-label="Refresh">
+            <span class="transition-wrapper">
+                <i class="m-icon m-icon-refresh"></i>
+            </span>
+        </button>
+    </div>
+    <div class="data-filter data-filter__text">
+        <div class="data-filter__text__content text-color-light">
+            <span>{{itemCount}}</span>
+            <span> items</span>
+        </div>
+    </div>
+</template>
+<div id="publicLinksHeader">
+</div>
+<div class="clearfix"></div>
 <template id="listItemTemplate" type="text/x-handlebars-template">
     <li class="file-history-viewer__item flex-grid grid--align-center">
         <a href="{{href}}" target="_blank">

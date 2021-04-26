@@ -1,13 +1,16 @@
 var self = this;
 self.plo = null;
 
-var source   = document.getElementById("listItemTemplate").innerHTML;
-var template = Handlebars.compile(source);
+var headerSource   = document.getElementById("headerTemplate").innerHTML;
+var headerTemplate = Handlebars.compile(headerSource);
+
+var listItemSource   = document.getElementById("listItemTemplate").innerHTML;
+var listItemTemplate = Handlebars.compile(listItemSource);
 
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
     if(self.plo == null) {
         self.plo = new PublicLinkOverview();
-        self.plo.initialize(entity, template);
+        self.plo.initialize(entity);
     }
 });
 
@@ -20,15 +23,15 @@ PublicLinkOverview = function () {
 }
 
 PublicLinkOverview.prototype = {
-    initialize: function (entity, template) {
+    initialize: function (entity) {
         this._item = entity;
-        this._renderPublicLinkList(template);        
+        this._renderPublicLinkList();        
     },
 
     dispose: function () {
     },
 
-    _renderPublicLinkList: function (template) {
+    _renderPublicLinkList: function () {
         var rawJSON = JSON.stringify(this._item);
         var entityObject = JSON.parse(rawJSON);
         var assetId = entityObject["id"];
@@ -37,6 +40,20 @@ PublicLinkOverview.prototype = {
         $.getJSON("https://playground.stylelabs.io/api/entities/" + assetId + "/relations/AssetToPublicLink", function(data) { 
             var publicLinkEntities = data["children"];
             if (publicLinkEntities) {
+
+                var context = {itemCount: publicLinkEntities.length};
+                var html = headerTemplate(context);
+                document.getElementById("publicLinksHeader").innerHTML = html;
+
+                // bind a click event to the refresh button to animate it and re-call this render function
+                $('#refreshPublicLinksPreview').click(function(){
+                    $('#refreshPublicLinksPreview span').addClass('m-icon-rotate-transform');
+                    setTimeout(() => {  $('#refreshPublicLinksPreview span').removeClass('m-icon-rotate-transform') }, 500);
+                    document.getElementById("publicLinkList").innerHTML = "";
+                    self.plo._renderPublicLinkList();
+                });
+
+                // iterate over the public link entities, retrieve their data and render the preview
                 for (var index = 0; index < publicLinkEntities.length; index++) {
                     var publicLinkAssetHref = publicLinkEntities[index]["href"];
                     if(publicLinkAssetHref && publicLinkAssetHref !== "") {
@@ -79,7 +96,7 @@ PublicLinkOverview.prototype = {
                                 }
 
                                 var context = {title: title, href: publicLink, preview: thumbnail, width: width, height: height, croppingType: croppingType};
-                                var html = template(context);
+                                var html = listItemTemplate(context);
                                 document.getElementById("publicLinkList").innerHTML += html;
                             }
                         });
@@ -87,6 +104,6 @@ PublicLinkOverview.prototype = {
                     }
                 }
             }
-        });
+        }.bind(self)); // we need a reference to self to be able to re-render the list when clicking the refresh button
     }
 }
