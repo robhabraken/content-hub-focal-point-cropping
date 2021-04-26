@@ -1,10 +1,10 @@
 var self = this;
 self.plo = null;
 
-var headerSource   = document.getElementById("headerTemplate").innerHTML;
+var headerSource = document.getElementById("headerTemplate").innerHTML;
 var headerTemplate = Handlebars.compile(headerSource);
 
-var listItemSource   = document.getElementById("listItemTemplate").innerHTML;
+var listItemSource = document.getElementById("listItemTemplate").innerHTML;
 var listItemTemplate = Handlebars.compile(listItemSource);
 
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
@@ -19,25 +19,56 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 });
 
 PublicLinkOverview = function () {
-    this._item = null;
+    this._assetId = null;
+    this._renditions = {};
 }
 
 PublicLinkOverview.prototype = {
     initialize: function (entity) {
-        this._item = entity;
-        this._renderPublicLinkList();        
+        var rawJSON = JSON.stringify(entity);
+        var entityObject = JSON.parse(rawJSON);
+        this._assetId = entityObject["id"];
+
+        if (this._assetId) {
+            this._getRenditions();
+            this._renderPublicLinkList();
+        }
     },
 
     dispose: function () {
     },
 
+    _getRenditions: function() {        
+        $.getJSON("https://playground.stylelabs.io/api/entities/" + this._assetId + "/renditions", function(data) { 
+            var renditionsData = data["renditions"];
+            if (renditionsData) {
+                for (var index = 0; index < renditionsData.length; index++) {
+                   var renditionLink = renditionsData[index]["rendition_link"];
+                    if (renditionLink) {
+                        var name = renditionLink["name"];
+
+                        // try to retrieve label for current culture
+                        var label = renditionLink["labels"][options.culture];
+                        if (!label) {
+                            // if not available, try to retrieve first label as default
+                            label = renditionLink["labels"][0];
+                        }
+                        if (!label) {
+                            // fallback to name if no label available
+                            label = name;
+                        }
+                    }
+                    // store label for further reference
+                    self.plo._renditions[name] = label;
+                }
+            }
+        }.bind(self));
+    },
+
     _renderPublicLinkList: function () {
-        var rawJSON = JSON.stringify(this._item);
-        var entityObject = JSON.parse(rawJSON);
-        var assetId = entityObject["id"];
 
         // parse AssetToPublicLink data to retrieve the entity IDs of the public links of this asset
-        $.getJSON("https://playground.stylelabs.io/api/entities/" + assetId + "/relations/AssetToPublicLink", function(data) { 
+        $.getJSON("https://playground.stylelabs.io/api/entities/" + this._assetId + "/relations/AssetToPublicLink", function(data) { 
             var publicLinkEntities = data["children"];
             if (publicLinkEntities) {
 
@@ -59,7 +90,7 @@ PublicLinkOverview.prototype = {
                     if(publicLinkAssetHref && publicLinkAssetHref !== "") {
 
                         // retrieve the entity data of each public link and get the public link url to add a thumbnail to the overview
-                        $.getJSON(publicLinkAssetHref, function(publicLinkData) { 
+                        $.getJSON(publicLinkAssetHref, function(publicLinkData) {
                             var publicLink = publicLinkData["public_link"];
                             if (publicLink && publicLink !== "") {
                                 
@@ -68,7 +99,7 @@ PublicLinkOverview.prototype = {
                                 var thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
 
                                 var title = publicLinkData["properties"]["RelativeUrl"];
-                                var rendition = publicLinkData["properties"]["Resource"];
+                                var rendition = self.plo._renditions[publicLinkData["properties"]["Resource"]];
                                 var width = "";
                                 var height = "";
 
@@ -92,10 +123,10 @@ PublicLinkOverview.prototype = {
                                 } else if (croppingType === "CentralFocalPoint") {
                                     croppingType = "Crop to center";
                                 } else {
-                                    croppingType = "Original resolution of " + rendition + " rendition";
+                                    croppingType = "Original dimensions of " + rendition + " rendition";
                                 }
 
-                                var context = {title: title, href: publicLink, preview: thumbnail, width: width, height: height, croppingType: croppingType};
+                                var context = {title: title, href: publicLink, preview: thumbnail, rendition: rendition, width: width, height: height, croppingType: croppingType};
                                 var html = listItemTemplate(context);
                                 document.getElementById("publicLinkList").innerHTML += html;
                             }
@@ -104,6 +135,6 @@ PublicLinkOverview.prototype = {
                     }
                 }
             }
-        }.bind(self)); // we need a reference to self to be able to re-render the list when clicking the refresh button
+        }.bind(self));
     }
 }
