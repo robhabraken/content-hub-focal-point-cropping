@@ -60,6 +60,8 @@ Create a new *Trigger* with the following properties:
   * Add Condition FocalPointX has changed
   * Add Condition FocalPointY has changed
   * Set operator to OR for these conditions
+  * Add another Condition one level up for MainFile has changed
+  * Set operator to OR for this condition
 * Actions
   * Add action DAM - Create public links for croppings
 
