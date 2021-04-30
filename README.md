@@ -44,7 +44,7 @@ Go to the Script editor by clicking `Edit` on the newly created Script entity an
 Create a new *Action* with the following properties:
 
 * Name: DAM - Create public links for croppings
-* Type: Action scrpit
+* Type: Action script
 * Script: DAM - Create public links for croppings
 
 ### Triggers
