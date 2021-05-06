@@ -108,7 +108,17 @@ Click `Save task` on the bottom of the screen, than `Save` in the upper right co
 
 ### External page components
 
-Go to *Pages* and select the *Asset detail* page. We are going to replace the *Entity image viewer* with a new component called the *Focal point viewer*. Go to `Settings` of the *Entity image viewer* in Column 1 of the Main Zone and toggle the `Visible` slide off to hide the original component. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and toggle the component `Visible`. Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the properties as following:
+Go to *Pages* and select the *Asset detail* page. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and configure it as following:
+
+* Title: Focal point viewer
+* Visible: yes (toggle on)
+* Nested: no
+* container: Panel
+* Show panel title: yes (toggle on)
+* Collapsible: yes (toggle on)
+* Collapsed by default: yes (toggle on)
+
+Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the properties as following:
 
 * Control name: Custom.Controls.FocalPointViewer
 * Code: [External page components/Focal point viewer.js](External%20page%20components/Focal%20point%20viewer.js)
