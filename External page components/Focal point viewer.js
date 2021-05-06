@@ -4,8 +4,10 @@ self.fp = null;
 var resizing = false;
 
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
-    self.fp = new FocalPointsExtension();
-    self.fp.initialize(entity);
+    if(self.fp == null) {
+        self.fp = new FocalPointsExtension();
+        self.fp.initialize(entity);
+    }
 });
 
 window.addEventListener('resize', function(event) {
