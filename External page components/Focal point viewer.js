@@ -4,7 +4,7 @@ self.fp = null;
 var resizing = false;
 
 var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", function (entity) {
-    if(self.fp == null) {
+    if (self.fp == null) {
         self.fp = new FocalPointsExtension();
         self.fp.initialize(entity);
     }
@@ -47,7 +47,7 @@ FocalPointsExtension.prototype = {
         this._itemGroup = this._item.properties["MainFile"]().properties.group;
 
         // focal point viewer not applicable for asset media types Videos and Documents (or other unforeseen asset types)
-        if(this._itemGroup !== "Images" && this._itemGroup !== "Vectors") {
+        if (this._itemGroup !== "Images" && this._itemGroup !== "Vectors") {
             $('#focalPointViewer').remove();
             return;
         }
@@ -83,7 +83,7 @@ FocalPointsExtension.prototype = {
 
         // initialization ready, bind the unlock button (toggling locking the focal point editing mode)
         $('#toggleLockFocalPoint').click(function(){
-            if(self.fp._locked) {
+            if (self.fp._locked) {
                 self.fp._unlock();
             } else {
                 self.fp._previewImageLoaded();
@@ -93,7 +93,7 @@ FocalPointsExtension.prototype = {
 
         // bind the save button to save the focal point data onto the asset when in editing mode
         $('#saveFocalPoint').click(function(){
-            if(!self.fp._locked) {
+            if (!self.fp._locked) {
                 self.fp._setFocalPoint();
                 self.fp._lock();
             }
@@ -113,7 +113,7 @@ FocalPointsExtension.prototype = {
                     self.fp._previewImageLoaded();
 
                     // also revert back to locked state, as resizing the window is seen as cancelling the focal point editing action
-                    if(!self.fp._locked) {
+                    if (!self.fp._locked) {
                         self.fp._lock();
                     }
                 }, 50);
@@ -180,7 +180,7 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseDown: function (sender, args) {
-        if(this._locked) {
+        if (this._locked) {
             return;
         }
 
@@ -199,7 +199,7 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseMove: function (sender, args) {
-        if(this._locked) {
+        if (this._locked) {
             return;
         }
 
@@ -216,11 +216,11 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseUp: function (sender, args) {
-        if(this._locked) {
+        if (this._locked) {
             return;
         }
 
-        if(this._remove) {
+        if (this._remove) {
             // focal point marker clicked without moving (dragging), so remove the focal point
             this._removeFocalPoint();
         } else {
@@ -230,7 +230,7 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseLeave: function (sender, args) {
-        if(this._locked) {
+        if (this._locked) {
             return;
         }
 
