@@ -10,27 +10,6 @@ var entityLoadedSubscription = options.mediator.subscribe("entityLoaded", functi
     }
 });
 
-window.addEventListener('resize', function(event) {
-    if (!resizing) {
-        resizing = true;
-
-        // limit the amount of resize events by handling one every half a second
-        setTimeout(() => {
-            resizing = false;
-
-            // if the window is resized, the preview image has a different dimension,
-            // requiring us to recalculate the ratio and redraw the focal point in the correct dimensions
-            // otherwise the mouse events wouldn't be bound to the correct relative location within the image
-            self.fp._previewImageLoaded();
-
-            // also revert back to locked state, as resizing the window is seen as cancelling the focal point editing action
-            if(!self.fp._locked) {
-                self.fp._lock();
-            }
-        }, 50);
-    }
-}, true);
-
 var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", function (entity) {
     self.fp.dispose();
 });
@@ -119,6 +98,27 @@ FocalPointsExtension.prototype = {
                 self.fp._lock();
             }
         });
+
+        window.addEventListener('resize', function(event) {
+            if (!resizing) {
+                resizing = true;
+
+                // limit the amount of resize events by handling one every half a second
+                setTimeout(() => {
+                    resizing = false;
+
+                    // if the window is resized, the preview image has a different dimension,
+                    // requiring us to recalculate the ratio and redraw the focal point in the correct dimensions
+                    // otherwise the mouse events wouldn't be bound to the correct relative location within the image
+                    self.fp._previewImageLoaded();
+
+                    // also revert back to locked state, as resizing the window is seen as cancelling the focal point editing action
+                    if(!self.fp._locked) {
+                        self.fp._lock();
+                    }
+                }, 50);
+            }
+        }, true);
     },
 
     dispose: function () {
