@@ -104,7 +104,7 @@ PublicLinkOverview.prototype = {
                                 var height = "";
 
                                 var croppingType = null;
-                                if (publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
+                                if (publicLinkData["properties"]["ConversionConfiguration"] && publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
                                     croppingType = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["cropping_type"];
                                     width = publicLinkData["properties"]["ConversionConfiguration"]["width"];
                                     height = publicLinkData["properties"]["ConversionConfiguration"]["height"];
