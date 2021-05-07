@@ -62,8 +62,16 @@ FocalPointsExtension.prototype = {
             return;
         }
 
+        // retrieve main properties of asset to initalize focal point viewer
         this._itemWidth = this._item.properties["MainFile"]().properties.width;
         this._itemHeight = this._item.properties["MainFile"]().properties.height;
+        this._itemGroup = this._item.properties["MainFile"]().properties.group;
+
+        // focal point viewer not applicable for asset media types Videos and Documents (or other unforeseen asset types)
+        if(this._itemGroup !== "Images" && this._itemGroup !== "Vectors") {
+            $('#focalPointViewer').remove();
+            return;
+        }
 
         this._previewImage = $('.previewImage')[0];
         this._previewImageLoadedDelegate = this._previewImageLoaded.bind(this);
