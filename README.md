@@ -1,6 +1,11 @@
-# Content Hub - Focal point cropping
+# Content Hub - Focal point cropping v1.1
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
+
+For more information, context and a video demo of the module and its configuration, check out:
+
+* [https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/](https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/)
+* [https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/](https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/)
 
 ## Configuration / Installation
 
