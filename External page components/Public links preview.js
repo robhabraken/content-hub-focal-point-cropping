@@ -59,7 +59,16 @@ PublicLinkOverview.prototype = {
                         }
                     }
                     // store label for further reference
-                    self.plo._renditions[name] = label;
+                    self.plo._renditions[name] = {};
+                    self.plo._renditions[name].label = label;
+                    self.plo._renditions[name].content_type = "Unknown";
+
+                    // try to retrieve content type and store for further reference
+                    var fileLocation = renditionsData[index]["file_location"];
+                    if (fileLocation["files"] && fileLocation["files"][0] &&
+                        fileLocation["files"][0]["metadata"] && fileLocation["files"][0]["metadata"]["content_type"]) {
+                            self.plo._renditions[name].content_type = fileLocation["files"][0]["metadata"]["content_type"];
+                    }
                 }
             }
         }.bind(self));
@@ -96,10 +105,14 @@ PublicLinkOverview.prototype = {
                                 
                                 // the thumbnail is displayed using a transformation to avoid loading large images
                                 // to ensure the public link thumbnail isn't cached, we add a random value to the image source
-                                var thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
+                                var thumbnail = "";
+                                if (self.plo._renditions[publicLinkData["properties"]["Resource"]].content_type.startsWith("image")) {
+                                    // the thumbnail is only displayed for image type renditions (not for Documents for example, or other application type public links)
+                                    thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
+                                }
 
                                 var title = publicLinkData["properties"]["RelativeUrl"];
-                                var rendition = self.plo._renditions[publicLinkData["properties"]["Resource"]];
+                                var rendition = self.plo._renditions[publicLinkData["properties"]["Resource"]].label;
                                 var width = "";
                                 var height = "";
 

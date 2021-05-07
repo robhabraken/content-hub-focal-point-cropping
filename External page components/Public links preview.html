@@ -31,7 +31,7 @@
     <li class="file-history-viewer__item flex-grid grid--align-center">
         <a href="{{href}}" target="_blank">
             <div class="file-history-viewer__thumb-wrapper" style="width:100px;-webkit-flex-basis:99px;flex-basis:100px;">
-                <img src="{{preview}}" class="file-history-viewer__asset-thumb" style="max-width:100px;max-height:100px;" alt="Image preview" />
+                {{#if preview}}<img src="{{preview}}" class="file-history-viewer__asset-thumb" style="max-width:100px;max-height:100px;" alt="Image preview" />{{/if}}
             </div>
             <div class="file-history-viewer__meta flex-grid grid--direction-column" style="max-width:calc(100% - 122px);">
                 <strong class="file-history-viewer__file-name" title="{{title}}">{{title}}</strong>
