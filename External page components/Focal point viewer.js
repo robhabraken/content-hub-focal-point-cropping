@@ -22,6 +22,11 @@ window.addEventListener('resize', function(event) {
             // requiring us to recalculate the ratio and redraw the focal point in the correct dimensions
             // otherwise the mouse events wouldn't be bound to the correct relative location within the image
             self.fp._previewImageLoaded();
+
+            // also revert back to locked state, as resizing the window is seen as cancelling the focal point editing action
+            if(!self.fp._locked) {
+                self.fp._lock();
+            }
         }, 50);
     }
 }, true);
@@ -33,6 +38,8 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 FocalPointsExtension = function () {
     this._focalPoint = {};
     this._focalPointRadius = 20;
+
+    this._locked = true;
 
     this._drag = false;
     this._remove = false;
@@ -48,7 +55,7 @@ FocalPointsExtension.prototype = {
     initialize: function (entity) {
         this._item = entity;
 
-        // MainFile not yet available, display placeholder
+        // MainFile not (yet) available, display placeholder
         if (!this._item.properties["MainFile"]().properties) {
             document.getElementById("imagePlaceholder").style.display = "block";
             $('#focalPointViewer').remove();
@@ -86,6 +93,24 @@ FocalPointsExtension.prototype = {
         this._focalCanvas.addEventListener("mouseleave", this._focalCanvasMouseLeaveDelegate);
 
         $("<span class='sfExample'></span>").appendTo('.sfPreviewVideoFrame');
+
+        // initialization ready, bind the unlock button (toggling locking the focal point editing mode)
+        $('#toggleLockFocalPoint').click(function(){
+            if(self.fp._locked) {
+                self.fp._unlock();
+            } else {
+                self.fp._previewImageLoaded();
+                self.fp._lock();
+            }
+        });
+
+        // bind the save button to save the focal point data onto the asset when in editing mode
+        $('#saveFocalPoint').click(function(){
+            if(!self.fp._locked) {
+                self.fp._setFocalPoint();
+                self.fp._lock();
+            }
+        });
     },
 
     dispose: function () {
@@ -117,6 +142,18 @@ FocalPointsExtension.prototype = {
         }
     },
 
+    _lock: function() {
+        document.getElementById("toggleLockFocalPoint").innerHTML = 'Edit';
+        $('#saveFocalPoint').addClass('disabled');
+        this._locked = true;
+    },
+
+    _unlock: function() {
+        document.getElementById("toggleLockFocalPoint").innerHTML = 'Cancel';
+        $('#saveFocalPoint').removeClass('disabled');
+        this._locked = false;
+    },
+
     _previewImageLoaded: function (sender, args) {
         var previewWidth = this._previewImage.width;
         this._ratio = this._itemWidth / previewWidth;
@@ -135,6 +172,10 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseDown: function (sender, args) {
+        if(this._locked) {
+            return;
+        }
+
         var x = sender.offsetX,
             y = sender.offsetY;
 
@@ -150,6 +191,10 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseMove: function (sender, args) {
+        if(this._locked) {
+            return;
+        }
+
         if (this._drag) {
 
             // if clicked and started dragging, user is picking up focal point, not clicking to remove
@@ -163,6 +208,10 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseUp: function (sender, args) {
+        if(this._locked) {
+            return;
+        }
+
         if(this._remove) {
             // focal point marker clicked without moving (dragging), so remove the focal point
             this._removeFocalPoint();
@@ -173,6 +222,10 @@ FocalPointsExtension.prototype = {
     },
 
     _focalCanvasMouseLeave: function (sender, args) {
+        if(this._locked) {
+            return;
+        }
+
         if (this._drag) {
             // when leaving the canvas while dragging, assume final position
             this._endSelection(sender);
@@ -210,14 +263,13 @@ FocalPointsExtension.prototype = {
         this._focalPoint.x = x;
         this._focalPoint.y = y;
 
-        var x = Math.ceil(this._focalPoint.x * this._ratio),
-            y = Math.ceil(this._focalPoint.y * this._ratio);
-
-        this._setFocalPoint(x, y);
         this._draw();
     },
 
-    _setFocalPoint: function (x, y) {
+    _setFocalPoint: function () {
+        var x = Math.ceil(this._focalPoint.x * this._ratio),
+            y = Math.ceil(this._focalPoint.y * this._ratio);
+
         // keep focal point within bounding box of image dimensions in case of dragging cursor off canvas
         x = Math.max(Math.min(x, this._itemWidth), 0);
         y = Math.max(Math.min(y, this._itemHeight), 0);
@@ -233,7 +285,7 @@ FocalPointsExtension.prototype = {
         this._remove = false;
 
         this._focalPoint = {};
-        this._setFocalPoint(0, 0);
+        this._setFocalPoint();
         this._clear();
     },
 

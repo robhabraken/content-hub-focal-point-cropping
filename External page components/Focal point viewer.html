@@ -11,8 +11,16 @@
 <div id="imagePlaceholder" class="image-wrapper bg-light-gray" style="display: none;">
     <i class="m-icon m-icon-image"></i>
 </div>
-<div id="focalPointViewer" class="image-wrapper">
-    <div class="previewFrame">
-        <img class="previewImage" src="" />
+<div id="focalPointViewer">
+    <div class="image-wrapper">
+        <div class="previewFrame">
+            <img class="previewImage" src="" />
+        </div>
+    </div>
+    <div style="display: flex;justify-content: flex-end;">
+        <span class="panel-header-controls">
+            <a class="btn btn-secondary" id="toggleLockFocalPoint">Edit</a>
+            <a class="btn btn-primary disabled" id="saveFocalPoint">Save</a>
+        </span>
     </div>
 </div>
