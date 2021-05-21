@@ -92,10 +92,10 @@ Click on the large plus sign at the beginning of the flow to add a new task and 
 
 * Parameters
   * Name: bitmap_for_web
-  * Content type: image/png
+  * Content type: image/jpeg
   * Content disposition: Inline
   * Resize option: Do not resize
-  * Target extension: png
+  * Target extension: jpg
   * Color profile: sRGB default
   * Density (DPI): 72
 * Outputs
