@@ -1,16 +1,16 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-struct CroppingDefinition {
+class CroppingDefinition {
 
-    public CroppingDefinition(string title, int width, int height) {
-
-        // current (temporary) naming convention of croppings, not unique per se as the title isn't guaranteed to be unique
-        this.Name = $"{title}-{width}x{height}".Replace(" ", "-").ToLower();
-        
+    public CroppingDefinition(string title, int width, int height) {    
+        this.Name = setCroppingName(title, width, height);
         this.Width = width;
         this.Height = height;
     }
@@ -18,6 +18,57 @@ struct CroppingDefinition {
     public string Name { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
+
+    // determines the name convention of the cropping, enforcing a unique URL friendly name
+    private string setCroppingName(string title, int width, int height) {
+
+        title = replaceDiacritics(title);
+        title = sanatizeFilename(title);
+
+        return $"{title}-{width}x{height}";
+    }
+
+    // replaces diacritics with their plain character variant
+    private string replaceDiacritics(string input) {
+
+        // first replace characters with their ASCII equivalent that would not be translated correctly using ASCII encoding
+        var sb = new StringBuilder(input);
+        sb.Replace("ß", "ss");
+        sb.Replace("Æ", "AE");
+        sb.Replace("æ", "ae");
+        sb.Replace("&", "and");
+
+        // for the next step, it would be more common to use Normalization, but this would require
+        // using UnicodeCategory retrieval to distinguish the NonSpacingMark characters,
+        // which isn't possible as System.Global.UnicodeCategory is a prohibited type or namespace in action scripts
+        // this alternative trick produces the same result, by first encoding it to Cyrillic and then to ASCII
+        // actually, this method is even simpler (less code) and more effective, as it ensures using ASCII characters exclusively
+        // which is a requirement for generating valid URLs (Normalization keeps certain diacritics that are seen as letters like đ, Đ
+        // and hence do not decompose into an ASCII character with a non-spacing mark, while this conversion translates them to d, D)
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        var bytes = Encoding.GetEncoding("Cyrillic").GetBytes(sb.ToString());
+        var ascii = Encoding.ASCII.GetString(bytes);
+
+        // because some exotic characters do not have an ASCII base character (like £ or ₧), the previous encoding result
+        // outputs question marks to replace those characters - to avoid generating invalid or strange URLs, we need to strip them out afterwards
+        ascii = ascii.Replace("?", string.Empty);
+
+        return ascii;
+    }
+
+    // prepare filename for usage in URL
+    private string sanatizeFilename(string input) {
+
+        // replace spaces with dashes to generate well-formed and human readible filenames
+        input = Regex.Replace(input, @"\s+", " ");
+        input = input.Replace(" ", "-");
+        
+        // remove all unallowed characters like interpunction, brackets etc.
+        var result = Regex.Replace(input, @"[^A-Za-z0-9\-]", string.Empty);
+
+        // return the lower case result of the sanatized filename
+        return result.ToLower();
+    }
 }
 
 // retrieve asset data
