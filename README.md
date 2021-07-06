@@ -29,7 +29,7 @@ And another member following the same procedure with the properties:
 * Name: FocalPointY
 * Label: Focal point Y-axis coordinate
 
-Click `Publish` to publish the new schema for your assets.
+Click `Publish` or `Apply changes` (depending on your Content Hub version) to publish the new schema for your assets.
 
 ### Scripts
 
