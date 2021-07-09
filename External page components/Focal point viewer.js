@@ -82,7 +82,7 @@ FocalPointsExtension.prototype = {
         $("<span class='sfExample'></span>").appendTo('.sfPreviewVideoFrame');
 
         // initialization ready, bind the unlock button (toggling locking the focal point editing mode)
-        $('#toggleLockFocalPoint').click(function(){
+        $('#toggleLockFocalPoint').click(function() {
             if (self.fp._locked) {
                 self.fp._unlock();
             } else {
@@ -92,7 +92,7 @@ FocalPointsExtension.prototype = {
         });
 
         // bind the save button to save the focal point data onto the asset when in editing mode
-        $('#saveFocalPoint').click(function(){
+        $('#saveFocalPoint').click(function() {
             if (!self.fp._locked) {
                 self.fp._setFocalPoint();
                 self.fp._lock();

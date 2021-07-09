@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-class CroppingDefinition {
+class CroppingDefinition
+{
 
-    public CroppingDefinition(string title, int width, int height) {    
+    public CroppingDefinition(string title, int width, int height)
+    {    
         this.Name = setCroppingName(title, width, height);
         this.Width = width;
         this.Height = height;
@@ -19,8 +21,8 @@ class CroppingDefinition {
     public int Height { get; set; }
 
     // determines the name convention of the cropping, enforcing a unique URL friendly name
-    private string setCroppingName(string title, int width, int height) {
-
+    private string setCroppingName(string title, int width, int height)
+    {
         title = replaceDiacritics(title);
         title = sanatizeFilename(title);
 
@@ -28,8 +30,8 @@ class CroppingDefinition {
     }
 
     // replaces diacritics with their plain character variant
-    private string replaceDiacritics(string input) {
-
+    private string replaceDiacritics(string input)
+    {
         // first replace characters with their ASCII equivalent that would not be translated correctly using ASCII encoding
         var sb = new StringBuilder(input);
         sb.Replace("ß", "ss");
@@ -56,8 +58,8 @@ class CroppingDefinition {
     }
 
     // prepare filename for usage in URL
-    private string sanatizeFilename(string input) {
-
+    private string sanatizeFilename(string input)
+    {
         // replace spaces with dashes to generate well-formed and human readible filenames
         input = Regex.Replace(input, @"\s+", " ");
         input = input.Replace(" ", "-");
@@ -83,8 +85,8 @@ var originalHeight = mainFile["properties"]["height"].ToObject<int>();
 var assetMediaType = mainFile["properties"]["group"].ToObject<string>();
 var scaleFactor = 1d;
 
-if (assetMediaType.Equals("Vectors")) {
-    
+if (assetMediaType.Equals("Vectors"))
+{    
     // switch to another rendition resource for vector images, as the original file cannot be cropped
     // this rendition should be configured in the media processing flow for vector images for this script to work
     renditionResource = "bitmap_for_web";
@@ -99,9 +101,9 @@ if (assetMediaType.Equals("Vectors")) {
 
     // determine scale factor of rendition for focal point scaling
     scaleFactor = (double)originalWidth / mainFileWidth;
-
-} else if (!assetMediaType.Equals("Images")) {
-
+}
+else if (!assetMediaType.Equals("Images"))
+{
     // other media types like Videos and Documents should not be cropped
     return;
 }
@@ -116,7 +118,8 @@ AddCroppingDefinition(1280, 430);
 AddCroppingDefinition(320, 100);
 AddCroppingDefinition(400, 600);
 
-void AddCroppingDefinition(int width, int height) {
+void AddCroppingDefinition(int width, int height)
+{
     var croppingDefinition = new CroppingDefinition(title, width, height);
     croppings.Add(croppingDefinition.Name, croppingDefinition);
 }
@@ -129,18 +132,17 @@ var query = Query.CreateQuery(entities => from e in entities
                                             && e.Property("IsDisabled") == false
                                             select e);
 
-
 var result = await MClient.Querying.QueryIdsAsync(query);
 if (result.TotalNumberOfResults > 0)
 { 
-    foreach(var entityId in result.Items) {
-
+    foreach (var entityId in result.Items)
+    {
         // retrieve existing public link entity to update its cropping based on the new focal point
         var publicLink = await MClient.Entities.GetAsync(entityId);
         var relativeUrl = publicLink.GetPropertyValue<string>("RelativeUrl");
 
-        if(croppings.ContainsKey(relativeUrl)) {
-
+        if (croppings.ContainsKey(relativeUrl))
+        {
             // update public link crop configuration for new focal point data
             await UpdatePublicLink(publicLink, croppings[relativeUrl]);
 
@@ -151,7 +153,8 @@ if (result.TotalNumberOfResults > 0)
 }
 
 // iterate over all cropping definitions that didn't have a public link already and create one
-foreach(var cropping in croppings) {
+foreach (var cropping in croppings)
+{
     await CreatePublicLink(renditionResource, assetId.Value, cropping.Value);
 }
 
@@ -199,12 +202,12 @@ async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 }
 
 // build conversion config json object for desired cropping configuration
-JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
-
+JObject BuildConversionConfiguration(int targetWidth, int targetHeight)
+{
     JObject conversionConfig = new JObject();
     conversionConfig["cropping_configuration"] = new JObject();
 
-    if(focalPointX == null || !focalPointX.HasValue ||
+    if (focalPointX == null || !focalPointX.HasValue ||
         focalPointY == null || !focalPointY.HasValue ||
         (focalPointX.Value == 0 && focalPointY.Value == 0)) {
 
@@ -213,9 +216,9 @@ JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
 
         conversionConfig["cropping_configuration"]["width"] = targetWidth;
         conversionConfig["cropping_configuration"]["height"] = targetHeight;
-
-    } else {
-
+    }
+    else
+    {
         int offsetX = 0;
         int offsetY = 0;
 
@@ -225,13 +228,13 @@ JObject BuildConversionConfiguration(int targetWidth, int targetHeight) {
         var relativeWidth = originalWidth;
         var relativeHeight = originalHeight;
 
-        if(widthRatio > heightRatio) {
-
+        if (widthRatio > heightRatio)
+        {
             relativeWidth = (int)Math.Round((double)originalHeight / targetHeight * targetWidth);
             offsetX = Math.Min(Math.Max((int)Math.Round((focalPointX.Value * scaleFactor) - relativeWidth / 2d), 0), originalWidth - relativeWidth);
-
-        } else if(widthRatio < heightRatio) {
-
+        }
+        else if (widthRatio < heightRatio)
+        {
             relativeHeight = (int)Math.Round((double)originalWidth / targetWidth * targetHeight);
             offsetY = Math.Min(Math.Max((int)Math.Round((focalPointY.Value * scaleFactor) - relativeHeight / 2d), 0), originalHeight - relativeHeight);
         }
