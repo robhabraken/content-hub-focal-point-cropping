@@ -140,6 +140,7 @@ Add another component by clicking the plus sign within a column to your likings,
 * Template: [External page components/Public links preview.html](External%20page%20components/Public%20links%20preview.html)
 
 Save and close the newly added component and go to an asset to verify correct placement of both new components.
+Edit the settings and select `Panel` for Container, and toggle the `Show panel title` and `Collapsible` switches on.
 
 #### Optional: Show focal point details
 
