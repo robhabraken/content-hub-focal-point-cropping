@@ -131,19 +131,15 @@ Drag the item to the position below the original image viewer and click on the `
 * Template: [External page components/Focal point viewer.html](External%20page%20components/Focal%20point%20viewer.html)
 
 `Save and close` the newly added component.
-Edit the settings and select `Panel` for Container, and toggle the `Show panel title`, `Collapsible` and `Collapsed by default` switches on.
 
-Add another component by clicking the plus sign within a column to your likings, for example on hte bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. Configure the properties as following:
+Add another component by clicking the plus sign within a column to your likings, for example on hte bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
 
 * Control name: Custom.Controls.PublicLinksPreview
 * Resources: https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js
 * Code: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
 * Template: [External page components/Public links preview.html](External%20page%20components/Public%20links%20preview.html)
 
-Save and close the newly added component.
-Edit the settings and select `Panel` for Container, and toggle the `Show panel title` and `Collapsible` switches on.
-
-Go to an asset to verify correct placement of both new components.
+Save and close the newly added component and go to an asset to verify correct placement of both new components.
 
 #### Optional: Show focal point details
 
