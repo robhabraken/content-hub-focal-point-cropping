@@ -202,9 +202,12 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
     }
 
     relation.Parents.Add(assetId);
-    
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
-    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+
+    if (!crop.Original)
+    {
+        var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
+        publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+    }
 
     await MClient.Entities.SaveAsync(publicLink);
     return;
@@ -215,8 +218,11 @@ async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
     MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
-    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+    if (!crop.Original)
+    {
+        var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
+        publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+    }
 
     await MClient.Entities.SaveAsync(publicLink);
     return;
