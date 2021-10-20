@@ -9,24 +9,41 @@ using Newtonsoft.Json.Linq;
 class CroppingDefinition
 {
 
-    public CroppingDefinition(string title, int width, int height)
-    {    
-        this.Name = setCroppingName(title, width, height);
+    public CroppingDefinition(string title, bool isOriginal, int width, int height, int ratioX, int ratioY)
+    {
+        this.Original = isOriginal;
+        this.Name = setCroppingName(title, width, height, ratioX, ratioY);
         this.Width = width;
         this.Height = height;
+        this.RatioX = ratioX;
+        this.RatioY = ratioY;
     }
 
+    public bool Original { get; set; }
     public string Name { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
+    public int RatioX { get; set; }
+    public int RatioY { get; set; }
 
     // determines the name convention of the cropping, enforcing a unique URL friendly name
-    private string setCroppingName(string title, int width, int height)
+    private string setCroppingName(string title, int width, int height, int ratioX, int ratioY)
     {
         title = replaceDiacritics(title);
         title = sanatizeFilename(title);
 
-        return $"{title}-{width}x{height}";
+        if (this.Original)
+        {
+            return $"{title}-original";
+        }
+        else if (width > 0)
+        {
+            return $"{title}-{width}x{height}";
+        }
+        else
+        {
+            return $"{title}-{ratioX}x{ratioY}";
+        }
     }
 
     // replaces diacritics with their plain character variant
@@ -113,14 +130,18 @@ var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
 
 // configure auto-generated croppings
 var croppings = new Dictionary<string, CroppingDefinition>();
-AddCroppingDefinition(1280, 960);
-AddCroppingDefinition(1280, 430);
-AddCroppingDefinition(320, 100);
-AddCroppingDefinition(400, 600);
+AddCroppingDefinition(0, 0, 0, 0, true);
+AddCroppingDefinition(1280, 960, 0, 0);
+AddCroppingDefinition(1280, 430, 0, 0);
+AddCroppingDefinition(320, 100, 0, 0);
+AddCroppingDefinition(400, 600, 0, 0);
+AddCroppingDefinition(0, 0, 3, 1);
+AddCroppingDefinition(0, 0, 16, 9);
+AddCroppingDefinition(0, 0, 4, 5);
 
-void AddCroppingDefinition(int width, int height)
+void AddCroppingDefinition(int width, int height, int ratioX, int ratioY, bool isOriginal = false)
 {
-    var croppingDefinition = new CroppingDefinition(title, width, height);
+    var croppingDefinition = new CroppingDefinition(title, isOriginal, width, height, ratioX, ratioY);
     croppings.Add(croppingDefinition.Name, croppingDefinition);
 }
 
