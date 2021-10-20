@@ -203,13 +203,7 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
 
     relation.Parents.Add(assetId);
 
-    if (!crop.Original)
-    {
-        var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
-        publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
-    }
-
-    await MClient.Entities.SaveAsync(publicLink);
+    CropAndSavePublicLink(publicLink, crop);
     return;
 }
 
@@ -218,12 +212,40 @@ async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
     MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
 
+    CropAndSavePublicLink(publicLink, crop);
+    return;
+}
+
+async Task CropAndSavePublicLink(IEntity publicLink, CroppingDefinition crop)
+{
+    // no cropping required, use original size for public link and omit creating the ConversionConfiguration
     if (!crop.Original)
     {
-        var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
+        // assume the cropping width and height are configured, use this as the default target to crop to
+        int width = crop.Width;
+        int height = crop.Height;
+
+        // if a cropping ratio is set, use that aspect ratio to calculate the maximum available resolution for this ratio
+        if (crop.RatioX > 0)
+        {
+            if (originalWidth / crop.RatioX > originalHeight / crop.RatioY)
+            {
+                width = originalHeight * crop.RatioX / crop.RatioY;
+                height = originalHeight;
+            }
+            else
+            {
+                width = originalWidth;
+                height = originalWidth * crop.RatioY / crop.RatioX;
+            }
+        }
+
+        // create the cropping conversion configuration
+        var croppingConfiguration = BuildConversionConfiguration(width, height);
         publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
     }
-
+    
+    // save the public link
     await MClient.Entities.SaveAsync(publicLink);
     return;
 }
