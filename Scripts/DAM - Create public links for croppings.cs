@@ -182,7 +182,18 @@ foreach (var cropping in croppings)
 // create new public link for this asset
 async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Creating public link for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    if (crop.Width > 0)
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    }
+    else if (crop.RatioX > 0)
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId} and ratio {crop.RatioX} x {crop.RatioY}.");
+    }
+    else
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId}.");
+    }
 
     var publicLink = await MClient.EntityFactory.CreateAsync("M.PublicLink");
 
@@ -210,7 +221,18 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
 // update existing public link for this asset
 async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    if (crop.Width > 0)
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    }
+    else if (crop.RatioX > 0)
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and ratio {crop.RatioX} x {crop.RatioY}.");
+    }
+    else
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId}.");
+    }    
 
     CropAndSavePublicLink(publicLink, crop);
     return;
