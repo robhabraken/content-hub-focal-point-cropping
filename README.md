@@ -86,6 +86,15 @@ Create a new *Transformation* with the following properties:
 
 This transformation will be used to display the public link thumbnails in the public link preview external page component.
 
+Create transformations for *all* desired image sizes. If you only enter a fixed width, you can combine them with public links based on ratios perfectly well. For example:
+
+* Name: w1024
+* Crop: Smart
+* Width (px): 1024
+* Quality: high quality
+
+Mind that maximum quality creates images that might be too big for web purposes. Carefully select between medium and high quality, depending on the desired file size, for optimal performance.
+
 ### Media processing
 
 To allow for resizing and cropping of Vector images we need to generate a bitmap version (rendition) of the asset once it is uploaded. Go to *Media processing* and click on the `Content` section on your left. Then, click the `Edit` icon for the *Vectors* flow.
