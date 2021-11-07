@@ -89,7 +89,7 @@ This transformation will be used to display the public link thumbnails in the pu
 Create transformations for *all* desired image sizes. If you only enter a fixed width, you can combine them with public links based on ratios perfectly well. For example:
 
 * Name: w1024
-* Crop: Smart
+* Crop: None
 * Width (px): 1024
 * Quality: high quality
 
