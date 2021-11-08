@@ -6,6 +6,7 @@ For more information, context and a video demo of the module and its configurati
 
 * [https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/](https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/)
 * [https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/](https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/)
+* [https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/] (https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/)
 
 ## Configuration / Installation
 
