@@ -1,4 +1,4 @@
-# Content Hub - Focal point cropping v2.0
+# Content Hub - Focal point cropping v2.1
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
@@ -68,7 +68,6 @@ Create a new *Trigger* with the following properties:
   * Add Condition FocalPointY has changed
   * Set operator to OR for these conditions
   * Add another Condition one level up for MainFile has changed
-  * Add another Condition to the top level for Renditions has changed
   * Set operator to OR for the top level conditions
 * Actions
   * Add action DAM - Create public links for croppings
