@@ -90,7 +90,17 @@ class CroppingDefinition
 }
 
 // retrieve asset data
-var assetId = Context.TargetId;
+long? assetId;
+if ($"{Context.ExecutionSource}".Equals("WebApi", StringComparison.InvariantCultureIgnoreCase))
+{
+    var data = Context.Data as JObject;
+    assetId = data?["assetId"]?.Value<long>();
+}
+else
+{
+    assetId = Context.TargetId;
+}
+
 var asset = await MClient.Entities.GetAsync(assetId.Value);
 var title = asset.GetPropertyValue("Title").ToString();
 
