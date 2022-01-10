@@ -19,6 +19,7 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 });
 
 PublicLinkOverview = function () {
+    this.contentHubBaseUrl = "https://playground.stylelabs.io/";
     this._assetId = null;
     this._renditions = {};
 }
@@ -39,7 +40,7 @@ PublicLinkOverview.prototype = {
     },
 
     _getRenditions: function() {        
-        $.getJSON("https://playground.stylelabs.io/api/entities/" + this._assetId + "/renditions", function(data) { 
+        $.getJSON(this.contentHubBaseUrl + "api/entities/" + this._assetId + "/renditions", function(data) { 
             var renditionsData = data["renditions"];
             if (renditionsData) {
                 for (var index = 0; index < renditionsData.length; index++) {
@@ -77,7 +78,7 @@ PublicLinkOverview.prototype = {
     _renderPublicLinkList: function () {
 
         // parse AssetToPublicLink data to retrieve the entity IDs of the public links of this asset
-        $.getJSON("https://playground.stylelabs.io/api/entities/" + this._assetId + "/relations/AssetToPublicLink", function(data) { 
+        $.getJSON(this.contentHubBaseUrl + "api/entities/" + this._assetId + "/relations/AssetToPublicLink", function(data) { 
             var publicLinkEntities = data["children"];
             if (publicLinkEntities) {
 
@@ -116,8 +117,9 @@ PublicLinkOverview.prototype = {
 
                     responses = responses.sort(compareResponse);
                     responses.forEach(element => {
-                        let html = convertToHtml(element);
-                        document.getElementById("publicLinkList").innerHTML += html;
+                        // let html = convertToHtml(element);
+                        // document.getElementById("publicLinkList").innerHTML += html;
+                        addPublicLinkElementToPage(element);
                     });
                 });
             }
@@ -132,7 +134,7 @@ function compareResponse(first, second) {
     return ('' + firstTitle).localeCompare(secondTitle, undefined, { numeric: true, sensitivity: 'base' });
 }
 
-function convertToHtml(publicLinkData) {
+function addPublicLinkElementToPage(publicLinkData) {
     // retrieve the entity data of each public link and get the public link url to add a thumbnail to the overview
     var publicLink = publicLinkData["public_link"];
     if (publicLink && publicLink !== "") {
