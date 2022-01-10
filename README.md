@@ -142,12 +142,12 @@ Drag the item to the position below the original image viewer and click on the `
 
 `Save and close` the newly added component.
 
-Add another component by clicking the plus sign within a column to your likings, for example on hte bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
+Add another component by clicking the plus sign within a column to your likings, for example on the bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
 
 * Control name: Custom.Controls.PublicLinksPreview
 * Resources: https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js
 * Code: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
-  * Replace two references of https://playground.stylelabs.io/ with your Content Hub instance URL
+  * Replace reference of https://playground.stylelabs.io/ with your content hub instance URL
 * Template: [External page components/Public links preview.html](External%20page%20components/Public%20links%20preview.html)
 
 Save and close the newly added component and go to an asset to verify correct placement of both new components.
