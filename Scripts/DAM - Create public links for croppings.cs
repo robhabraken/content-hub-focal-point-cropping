@@ -9,24 +9,41 @@ using Newtonsoft.Json.Linq;
 class CroppingDefinition
 {
 
-    public CroppingDefinition(string title, int width, int height)
-    {    
-        this.Name = setCroppingName(title, width, height);
+    public CroppingDefinition(string title, bool isOriginal, int width, int height, int ratioX, int ratioY)
+    {
+        this.Original = isOriginal;
+        this.Name = setCroppingName(title, width, height, ratioX, ratioY);
         this.Width = width;
         this.Height = height;
+        this.RatioX = ratioX;
+        this.RatioY = ratioY;
     }
 
+    public bool Original { get; set; }
     public string Name { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
+    public int RatioX { get; set; }
+    public int RatioY { get; set; }
 
     // determines the name convention of the cropping, enforcing a unique URL friendly name
-    private string setCroppingName(string title, int width, int height)
+    private string setCroppingName(string title, int width, int height, int ratioX, int ratioY)
     {
         title = replaceDiacritics(title);
         title = sanatizeFilename(title);
 
-        return $"{title}-{width}x{height}";
+        if (this.Original)
+        {
+            return $"{title}-original";
+        }
+        else if (width > 0)
+        {
+            return $"{title}-{width}x{height}";
+        }
+        else
+        {
+            return $"{title}-{ratioX}x{ratioY}";
+        }
     }
 
     // replaces diacritics with their plain character variant
@@ -73,7 +90,17 @@ class CroppingDefinition
 }
 
 // retrieve asset data
-var assetId = Context.TargetId;
+long? assetId;
+if ($"{Context.ExecutionSource}".Equals("WebApi", StringComparison.InvariantCultureIgnoreCase))
+{
+    var data = Context.Data as JObject;
+    assetId = data?["assetId"]?.Value<long>();
+}
+else
+{
+    assetId = Context.TargetId;
+}
+
 var asset = await MClient.Entities.GetAsync(assetId.Value);
 var title = asset.GetPropertyValue("Title").ToString();
 
@@ -113,14 +140,18 @@ var focalPointY = asset.GetPropertyValue<int?>("FocalPointY");
 
 // configure auto-generated croppings
 var croppings = new Dictionary<string, CroppingDefinition>();
-AddCroppingDefinition(1280, 960);
-AddCroppingDefinition(1280, 430);
-AddCroppingDefinition(320, 100);
-AddCroppingDefinition(400, 600);
+AddCroppingDefinition(0, 0, 0, 0, true);
+AddCroppingDefinition(1280, 960, 0, 0);
+AddCroppingDefinition(1280, 430, 0, 0);
+AddCroppingDefinition(320, 100, 0, 0);
+AddCroppingDefinition(400, 600, 0, 0);
+AddCroppingDefinition(0, 0, 3, 1);
+AddCroppingDefinition(0, 0, 16, 9);
+AddCroppingDefinition(0, 0, 4, 5);
 
-void AddCroppingDefinition(int width, int height)
+void AddCroppingDefinition(int width, int height, int ratioX, int ratioY, bool isOriginal = false)
 {
-    var croppingDefinition = new CroppingDefinition(title, width, height);
+    var croppingDefinition = new CroppingDefinition(title, isOriginal, width, height, ratioX, ratioY);
     croppings.Add(croppingDefinition.Name, croppingDefinition);
 }
 
@@ -161,7 +192,18 @@ foreach (var cropping in croppings)
 // create new public link for this asset
 async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Creating public link for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    if (crop.Width > 0)
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    }
+    else if (crop.RatioX > 0)
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId} and ratio {crop.RatioX} x {crop.RatioY}.");
+    }
+    else
+    {
+        MClient.Logger.Info($"Creating public link for asset with ID {assetId}.");
+    }
 
     var publicLink = await MClient.EntityFactory.CreateAsync("M.PublicLink");
 
@@ -181,22 +223,61 @@ async Task CreatePublicLink(string rendition, long assetId, CroppingDefinition c
     }
 
     relation.Parents.Add(assetId);
-    
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
-    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
 
-    await MClient.Entities.SaveAsync(publicLink);
+    CropAndSavePublicLink(publicLink, crop);
     return;
 }
 
 // update existing public link for this asset
 async Task UpdatePublicLink(IEntity publicLink, CroppingDefinition crop)
 {
-    MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    if (crop.Width > 0)
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and dimensions {crop.Width} x {crop.Height}.");
+    }
+    else if (crop.RatioX > 0)
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId} and ratio {crop.RatioX} x {crop.RatioY}.");
+    }
+    else
+    {
+        MClient.Logger.Info($"Updating crop configuration for asset with ID {assetId}.");
+    }    
 
-    var croppingConfiguration = BuildConversionConfiguration(crop.Width, crop.Height);
-    publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+    CropAndSavePublicLink(publicLink, crop);
+    return;
+}
 
+async Task CropAndSavePublicLink(IEntity publicLink, CroppingDefinition crop)
+{
+    // no cropping required, use original size for public link and omit creating the ConversionConfiguration
+    if (!crop.Original)
+    {
+        // assume the cropping width and height are configured, use this as the default target to crop to
+        int width = crop.Width;
+        int height = crop.Height;
+
+        // if a cropping ratio is set, use that aspect ratio to calculate the maximum available resolution for this ratio
+        if (crop.RatioX > 0)
+        {
+            if (originalWidth / crop.RatioX > originalHeight / crop.RatioY)
+            {
+                width = originalHeight * crop.RatioX / crop.RatioY;
+                height = originalHeight;
+            }
+            else
+            {
+                width = originalWidth;
+                height = originalWidth * crop.RatioY / crop.RatioX;
+            }
+        }
+
+        // create the cropping conversion configuration
+        var croppingConfiguration = BuildConversionConfiguration(width, height);
+        publicLink.SetPropertyValue("ConversionConfiguration", croppingConfiguration);
+    }
+    
+    // save the public link
     await MClient.Entities.SaveAsync(publicLink);
     return;
 }

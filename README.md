@@ -1,4 +1,4 @@
-# Content Hub - Focal point cropping v1.1
+# Content Hub - Focal point cropping v2.1
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
@@ -6,6 +6,7 @@ For more information, context and a video demo of the module and its configurati
 
 * [https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/](https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/)
 * [https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/](https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/)
+* [https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/](https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/)
 
 ## Configuration / Installation
 
@@ -67,7 +68,7 @@ Create a new *Trigger* with the following properties:
   * Add Condition FocalPointY has changed
   * Set operator to OR for these conditions
   * Add another Condition one level up for MainFile has changed
-  * Set operator to OR for this condition
+  * Set operator to OR for the top level conditions
 * Actions
   * Add action DAM - Create public links for croppings
 
@@ -84,6 +85,15 @@ Create a new *Transformation* with the following properties:
 * Quality: medium quality
 
 This transformation will be used to display the public link thumbnails in the public link preview external page component.
+
+Create transformations for *all* desired image sizes. If you only enter a fixed width, you can combine them with public links based on ratios perfectly well. For example:
+
+* Name: w1024
+* Crop: None
+* Width (px): 1024
+* Quality: high quality
+
+Mind that maximum quality creates images that might be too big for web purposes. Carefully select between medium and high quality, depending on the desired file size, for optimal performance.
 
 ### Media processing
 
@@ -132,12 +142,12 @@ Drag the item to the position below the original image viewer and click on the `
 
 `Save and close` the newly added component.
 
-Add another component by clicking the plus sign within a column to your likings, for example on hte bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
+Add another component by clicking the plus sign within a column to your likings, for example on the bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
 
 * Control name: Custom.Controls.PublicLinksPreview
 * Resources: https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js
 * Code: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
-  * Replace reference of https://playground.stylelabs.io/ with your content hub instance url (line 22)
+  * Replace reference of https://playground.stylelabs.io/ with your content hub instance URL
 * Template: [External page components/Public links preview.html](External%20page%20components/Public%20links%20preview.html)
 
 Save and close the newly added component and go to an asset to verify correct placement of both new components.
