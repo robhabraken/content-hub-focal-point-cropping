@@ -3,6 +3,9 @@
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
 Change log:
+* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point
+* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio
+* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets
 * v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component)
 
 For more information, context and a video demo of the module and its configuration, check out:
