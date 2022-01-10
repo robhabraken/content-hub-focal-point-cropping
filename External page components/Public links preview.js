@@ -117,8 +117,6 @@ PublicLinkOverview.prototype = {
 
                     responses = responses.sort(compareResponse);
                     responses.forEach(element => {
-                        // let html = convertToHtml(element);
-                        // document.getElementById("publicLinkList").innerHTML += html;
                         addPublicLinkElementToPage(element);
                     });
                 });
