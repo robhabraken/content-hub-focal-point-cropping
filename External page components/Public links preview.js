@@ -19,7 +19,7 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 });
 
 PublicLinkOverview = function () {
-    this.contentHubBaseUrl = "https://playground.stylelabs.io/";
+    this.contentHubBaseUrl = "https://sugcon-integrations.sitecoresandbox.cloud/";
     this._assetId = null;
     this._renditions = {};
 }
@@ -111,11 +111,21 @@ PublicLinkOverview.prototype = {
 
                     // Let's map the arguments into an object, for ease of use
                     var responses = [];
-                    for (var i = 0, len = arguments.length; i < len; i++) {
-                        responses.push(arguments[i][0]);
+                    for (var i = 0; i < arguments.length; i++) {
+
+                        // if it's one item only, the arguments aren't pushed into an array
+                        if (publicLinkEntities.length == 1) {
+                            responses.push(arguments[i]);
+                        } else {
+                            responses.push(arguments[i][0]);
+                        }
                     }
 
-                    responses = responses.sort(compareResponse);
+                    // only sort for 2 items or more
+                    if (publicLinkEntities.length > 1) {
+                        responses = responses.sort(compareResponse);
+                    }
+
                     responses.forEach(element => {
                         addPublicLinkElementToPage(element);
                     });
@@ -134,47 +144,49 @@ function compareResponse(first, second) {
 
 function addPublicLinkElementToPage(publicLinkData) {
     // retrieve the entity data of each public link and get the public link url to add a thumbnail to the overview
-    var publicLink = publicLinkData["public_link"];
-    if (publicLink && publicLink !== "") {
+    if (publicLinkData) {
+        var publicLink = publicLinkData["public_link"];
+        if (publicLink && publicLink !== "") {
 
-        // the thumbnail is displayed using a transformation to avoid loading large images
-        // to ensure the public link thumbnail isn't cached, we add a random value to the image source
-        var thumbnail = "";
-        if (self.plo._renditions[publicLinkData["properties"]["Resource"]].content_type.startsWith("image")) {
-            // the thumbnail is only displayed for image type renditions (not for Documents for example, or other application type public links)
-            thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
-        }
-
-        var title = publicLinkData["properties"]["RelativeUrl"];
-        var rendition = self.plo._renditions[publicLinkData["properties"]["Resource"]].label;
-        var width = "";
-        var height = "";
-
-        var croppingType = null;
-        if (publicLinkData["properties"]["ConversionConfiguration"] && publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
-            croppingType = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["cropping_type"];
-            width = publicLinkData["properties"]["ConversionConfiguration"]["width"];
-            height = publicLinkData["properties"]["ConversionConfiguration"]["height"];
-
-            // depending on the way of cropping, the width and height are stored in different objects
-            if (!width || width == null) {
-                width = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["width"];
-                height = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["height"];
+            // the thumbnail is displayed using a transformation to avoid loading large images
+            // to ensure the public link thumbnail isn't cached, we add a random value to the image source
+            var thumbnail = "";
+            if (self.plo._renditions[publicLinkData["properties"]["Resource"]].content_type.startsWith("image")) {
+                // the thumbnail is only displayed for image type renditions (not for Documents for example, or other application type public links)
+                thumbnail = publicLink + "&t=thumbnail&r=" + Math.random();
             }
-        }
 
-        if (croppingType === "Entropy") {
-            croppingType = "Smart crop";
-        } else if (croppingType === "Custom") {
-            croppingType = "Custom crop";
-        } else if (croppingType === "CentralFocalPoint") {
-            croppingType = "Crop to center";
-        } else {
-            croppingType = "Uncropped";
-        }
+            var title = publicLinkData["properties"]["RelativeUrl"];
+            var rendition = self.plo._renditions[publicLinkData["properties"]["Resource"]].label;
+            var width = "";
+            var height = "";
 
-        var context = { title: title, href: publicLink, preview: thumbnail, rendition: rendition, width: width, height: height, croppingType: croppingType };
-        var html = listItemTemplate(context);
-        document.getElementById("publicLinkList").innerHTML += html;
+            var croppingType = null;
+            if (publicLinkData["properties"]["ConversionConfiguration"] && publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]) {
+                croppingType = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["cropping_type"];
+                width = publicLinkData["properties"]["ConversionConfiguration"]["width"];
+                height = publicLinkData["properties"]["ConversionConfiguration"]["height"];
+
+                // depending on the way of cropping, the width and height are stored in different objects
+                if (!width || width == null) {
+                    width = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["width"];
+                    height = publicLinkData["properties"]["ConversionConfiguration"]["cropping_configuration"]["height"];
+                }
+            }
+
+            if (croppingType === "Entropy") {
+                croppingType = "Smart crop";
+            } else if (croppingType === "Custom") {
+                croppingType = "Custom crop";
+            } else if (croppingType === "CentralFocalPoint") {
+                croppingType = "Crop to center";
+            } else {
+                croppingType = "Uncropped";
+            }
+
+            var context = { title: title, href: publicLink, preview: thumbnail, rendition: rendition, width: width, height: height, croppingType: croppingType };
+            var html = listItemTemplate(context);
+            document.getElementById("publicLinkList").innerHTML += html;
+        }
     }
 }
