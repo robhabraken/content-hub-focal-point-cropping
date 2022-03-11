@@ -19,7 +19,7 @@ var entityUnloadedSubscription = options.mediator.subscribe("entityUnloaded", fu
 });
 
 PublicLinkOverview = function () {
-    this.contentHubBaseUrl = "https://sugcon-integrations.sitecoresandbox.cloud/";
+    this.contentHubBaseUrl = "https://{your-content-hub-url}/";
     this._assetId = null;
     this._renditions = {};
 }
