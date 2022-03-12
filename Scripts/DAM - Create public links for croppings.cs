@@ -91,7 +91,7 @@ class CroppingDefinition
 
 // retrieve asset data
 long? assetId;
-if ($"{Context.ExecutionSource}".Equals("WebApi", StringComparison.InvariantCultureIgnoreCase))
+if (Context.ExecutionSource == ExecutionSource.WebApi)
 {
     var data = Context.Data as JObject;
     assetId = data?["assetId"]?.Value<long>();
