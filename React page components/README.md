@@ -1,7 +1,7 @@
 # Content Hub - Focal point cropping v3.0 Alpha
 
 ***IMPORTANT***
-This is an alpha version of HTML components converted into React components. The current state is that the Public Link viewer has been converted.
+This is an alpha version of the Focal point cropping HTML components converted into React components. Currently, only the Public Link viewer has been converted.
 
 In order to activate the Public Link viewer, execute the following steps:
 
@@ -24,6 +24,6 @@ In order to activate the Public Link viewer, execute the following steps:
  18. Open the `Asset detail` page
 
 ## Known issues
-1. The source Rendition is set properply set.
+1. The source Rendition is not properply set.
 2. The width and heigth for the Original public link aren't set yet.
-3. The Focal point viewer component hasn't been created yet.
+3. The Focal point viewer component hasn't yet been created.
