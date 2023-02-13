@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log('Loading public links!');
+            console.log('Loading public links');
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
@@ -80,7 +80,6 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
     )
 
     async function loadPublicLinks(client: IContentHubClient, entityId: number) {
-        // TODO don't load everything!
         var entity = await client.entities.getAsync(entityId, EntityLoadConfiguration.Full);
 
         if (entity == null) {
@@ -117,7 +116,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         const rendition = renditions[entity.getPropertyValue("Resource") as string] ?? "Unknown";
 
         const conversionConfiguration = extractConversionConfiguration(entity);
-        const croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Not applicable";
+        const croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Uncropped";
         const width = conversionConfiguration?.cropping_configuration?.width ?? 0;
         const height = conversionConfiguration?.cropping_configuration?.height ?? 0;
 
@@ -125,7 +124,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
             <TableRow key={"row_" + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell size="small">
                     <a href={entityUrl} target="_blank">
-                        <img src={entityUrl + "&t=thumbnail"} alt="Image preview" />
+                        <img src={entityUrl + "&t=thumbnail"} class="publicLinkPreviewImage" alt="Image preview" />
                     </a>
                 </TableCell>
                 <TableCell valign="top">
@@ -152,7 +151,8 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
             if (renditionLink) {
                 var name = renditionLink["name"];
 
-                // try to retrieve label for current culture
+                // try to retrieve label for default culture
+                // TODO: this should be 'for current culture' and retrieve something like context.options.culture - so check if that is possible
                 var label = renditionLink["labels"]["en-US"];
                 if (!label) {
                     // if not available, try to retrieve first label as default
