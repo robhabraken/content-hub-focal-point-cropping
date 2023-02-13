@@ -27,3 +27,4 @@ In order to activate the Public Link viewer, execute the following steps:
 1. The source Rendition is not properply set.
 2. The width and heigth for the Original public link aren't set yet.
 3. The Focal point viewer component hasn't yet been created.
+4. I suspect that the styles.css file isn't used or at least the defined class within isn't used. Either fix this and add styling or remove the redundant file.
