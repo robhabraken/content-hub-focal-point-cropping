@@ -2,7 +2,7 @@
   "name": "external-react-bundle",
   "version": "1.0.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "http-server dist --cors=* --gzip --proxy=http://localhost:8095",
     "watch": "webpack --mode development --watch",
