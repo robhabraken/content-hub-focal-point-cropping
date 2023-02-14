@@ -5,22 +5,23 @@ This is an alpha version of the Focal point cropping HTML components converted i
 
 In order to install the Public Link viewer, execute the following steps:
 
- 1. Goto `/React page components` folder
+ 1. Go to `/React page components` folder
  2. Run `npm install`. This will ensure that the packages are downloaded and installed
  3. Run `npm run build`. This will trigger a build
- 4. Goto `/dist` folder and copy `publicLinkViewer.js`
- 5. Goto your Content Hub Instance
- 6. Goto `Manage` -> `Portal assets` and click on `Upload files`
+ 4. Go to `/dist` folder and copy `publicLinkViewer.js`
+ 5. Go to your Content Hub Instance
+ 6. Go to `Manage` -> `Portal assets` and click on `Upload files`
  7. Upload `publicLinkViewer.js`
  8. Wait for the background jobs to be finished.
- 9. Goto the `Asset detail` page
- 10. Add an `External page component` on the page
+ 6. Go to `Manage` -> `Pages`
+ 9. Go to the `Asset details` page
+ 10. Add an `External` component on the page
  11. Set the title to `Public link viewer` and click on `Add`
  12. Open `Settings`, set Container to `Panel` and switch Show panel title `ON` 
  13. Edit the component
  15. Change JS bundle to `From asset`
  16. Click on the + sign below `From asset` and select `publicLinkViewer.js`
- 17. Hit `Save` twice
+ 17. Hit `Save`
  18. Open the `Asset detail` page
 
 ## Known issues
