@@ -124,7 +124,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
             <TableRow key={"row_" + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell size="small">
                     <a href={entityUrl} target="_blank">
-                        <img src={entityUrl + "&t=thumbnail"} class="publicLinkPreviewImage" alt="Image preview" />
+                        <img src={entityUrl + "&t=thumbnail"} className="publicLinkPreviewImage" alt="Image preview" />
                     </a>
                 </TableCell>
                 <TableCell valign="top">

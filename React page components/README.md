@@ -6,7 +6,7 @@ This is an alpha version of the Focal point cropping HTML components converted i
 In order to install the Public Link viewer, execute the following steps:
 
  1. Goto `/React page components` folder
- 2. Run `npm install`. This will ensure that the package are downloaded and installed
+ 2. Run `npm install`. This will ensure that the packages are downloaded and installed
  3. Run `npm run build`. This will trigger a build
  4. Goto `/dist` folder and copy `publicLinkViewer.js`
  5. Goto your Content Hub Instance
