@@ -3,7 +3,7 @@
 ***IMPORTANT***
 This is an alpha version of the Focal point cropping HTML components converted into React components. Currently, only the Public Link viewer has been converted.
 
-In order to activate the Public Link viewer, execute the following steps:
+In order to install the Public Link viewer, execute the following steps:
 
  1. Goto `/React page components` folder
  2. Run `npm install`. This will ensure that the package are downloaded and installed
