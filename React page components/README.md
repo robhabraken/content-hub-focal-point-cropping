@@ -5,7 +5,7 @@ This is an alpha version of the Focal point cropping HTML components converted i
 
 In order to activate the Public Link viewer, execute the following steps:
 
- 1. Goto `/React components` folder
+ 1. Goto `/React page components` folder
  2. Run `npm install`. This will ensure that the package are downloaded and installed
  3. Run `npm run build`. This will trigger a build
  4. Goto `/dist` folder and copy `publicLinkViewer.js`
