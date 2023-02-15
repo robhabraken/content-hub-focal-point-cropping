@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log('Loading public links');
+            console.log("Loading public links (version 3.0.5)");
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
@@ -124,7 +124,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
             <TableRow key={"row_" + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell size="small">
                     <a href={entityUrl} target="_blank">
-                        <img src={entityUrl + "&t=thumbnail"} className="publicLinkPreviewImage" alt="Image preview" />
+                        <img src={entityUrl + "&t=thumbnail"} alt="Image preview" />
                     </a>
                 </TableCell>
                 <TableCell valign="top">

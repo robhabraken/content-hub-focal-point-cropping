@@ -28,5 +28,4 @@ In order to install the Public Link viewer, execute the following steps:
 1. The source Rendition is not properply set.
 2. The width and heigth for the Original public link aren't set yet.
 3. The Focal point viewer component hasn't yet been created.
-4. I suspect that the styles.css file isn't used or at least the defined class within isn't used. Either fix this and add styling or remove the redundant file. > Update, I now have included the class in he preview panel, check if it actually comes true as intended.
-5. Retrieve label of current culture instead of default culture in publicLinkViewer
+4. Retrieve label of current culture instead of default culture in publicLinkViewer
