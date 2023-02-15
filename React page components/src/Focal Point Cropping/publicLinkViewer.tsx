@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log("Loading public links (version 3.0.5)");
+            console.log("Loading public links (version 3.0.6)");
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
@@ -116,9 +116,17 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         const rendition = renditions[entity.getPropertyValue("Resource") as string] ?? "Unknown";
 
         const conversionConfiguration = extractConversionConfiguration(entity);
-        const croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Uncropped";
-        const width = conversionConfiguration?.cropping_configuration?.width ?? 0;
-        const height = conversionConfiguration?.cropping_configuration?.height ?? 0;
+        var croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Uncropped";
+        var width = conversionConfiguration?.cropping_configuration?.width ?? 0;
+        var height = conversionConfiguration?.cropping_configuration?.height ?? 0;
+
+        if (croppingType === "Entropy") {
+            croppingType = "Smart crop";
+        } else if (croppingType === "Custom") {
+            croppingType = "Custom crop";
+        } else if (croppingType === "CentralFocalPoint") {
+            croppingType = "Crop to center";
+        }
 
         return (
             <TableRow key={"row_" + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
