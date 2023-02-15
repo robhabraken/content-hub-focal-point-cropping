@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log("Loading public links (version 3.0.6)");
+            console.log("Loading public links (version 3.0.15)");
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
@@ -87,7 +87,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         }
 
         var publicLinkRelation = entity.getRelation('AssetToPublicLink', RelationRole.Parent);
-        var renditions = processRenditions(entity.getPropertyValue("Renditions") as any);
+        var renditions = getRenditions(entityId);
         setRenditions(renditions);
 
         let ids = publicLinkRelation?.getIds() as number[];
@@ -117,8 +117,8 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
 
         const conversionConfiguration = extractConversionConfiguration(entity);
         var croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Uncropped";
-        var width = conversionConfiguration?.cropping_configuration?.width ?? 0;
-        var height = conversionConfiguration?.cropping_configuration?.height ?? 0;
+        var width = conversionConfiguration?.width ?? conversionConfiguration?.cropping_configuration?.width ?? 0;
+        var height = conversionConfiguration?.height ?? conversionConfiguration?.cropping_configuration?.height ?? 0;
 
         if (croppingType === "Entropy") {
             croppingType = "Smart crop";
@@ -141,7 +141,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
                     </Typography>
                     <Box>
                         <Typography variant="caption">
-                            <strong>{rendition}</strong> · {croppingType} · {width} x {height} px
+                            <strong>{rendition.label}</strong> · {croppingType} · {width} x {height} px
                         </Typography>
                     </Box>
                 </TableCell>
@@ -149,42 +149,54 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         )
     }
 
-    function processRenditions(renditionsData: any[]) {
+    function getRenditions(entityId: number) {
         var renditions: { [id: string]: IRendition } = {};
 
-        for (var index = 0; index < renditionsData.length; index++) {
-            var rendition = new Rendition();
+        const contentHubBaseUrl = "https://react-demo.sitecoresandbox.cloud/";
 
-            var renditionLink = renditionsData[index]["rendition_link"];
-            if (renditionLink) {
-                var name = renditionLink["name"];
+        fetch(contentHubBaseUrl + "api/entities/" + entityId + "/renditions")
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                var renditionsData = data["renditions"];
+                if (renditionsData) {
+                    for (var index = 0; index < renditionsData.length; index++) {
 
-                // try to retrieve label for default culture
-                // TODO: this should be 'for current culture' and retrieve something like context.options.culture - so check if that is possible
-                var label = renditionLink["labels"]["en-US"];
-                if (!label) {
-                    // if not available, try to retrieve first label as default
-                    label = renditionLink["labels"][0];
+                        var rendition = new Rendition();
+
+                        var renditionLink = renditionsData[index]["rendition_link"];
+                        var name;
+                        if (renditionLink) {
+                            name = renditionLink["name"];
+
+                            // try to retrieve label for current culture
+                            var label = renditionLink["labels"][context.options.culture];
+                            if (!label) {
+                                // if not available, try to retrieve first label as default
+                                label = renditionLink["labels"][0];
+                            }
+                            if (!label) {
+                                // fallback to name if no label available
+                                label = name;
+                            }
+                        }
+
+                        rendition.label = label;
+                        rendition.contentType = "Unknown";
+
+                        // try to retrieve content type and store for further reference
+                        var fileLocation = renditionsData[index]["file_location"];
+                        if (fileLocation["files"] && fileLocation["files"][0]
+                            && fileLocation["files"][0]["metadata"]
+                            && fileLocation["files"][0]["metadata"]["content_type"]) {
+                            rendition.contentType = fileLocation["files"][0]["metadata"]["content_type"];
+                        }
+
+                        renditions[name] = rendition;
+                    }
                 }
-                if (!label) {
-                    // fallback to name if no label available
-                    label = name;
-                }
-            }
-
-            rendition.label = label;
-            rendition.contentType = "Unknown";
-
-            // try to retrieve content type and store for further reference
-            var fileLocation = renditionsData[index]["file_location"];
-            if (fileLocation["files"] && fileLocation["files"][0]
-                && fileLocation["files"][0]["metadata"]
-                && fileLocation["files"][0]["metadata"]["content_type"]) {
-                rendition.contentType = fileLocation["files"][0]["metadata"]["content_type"];
-            }
-
-            renditions[rendition.label] = rendition;
-        }
+            });
 
         return renditions;
     }

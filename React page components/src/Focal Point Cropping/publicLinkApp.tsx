@@ -12,6 +12,7 @@ interface IContentHubContext {
 
 interface IContentHubPageProps {
     entityId: number;
+    culture: string;
 }
 
 export default function createExternalRoot(container: HTMLElement) {

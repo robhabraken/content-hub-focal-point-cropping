@@ -25,7 +25,5 @@ In order to install the Public Link viewer, execute the following steps:
  18. Open the `Asset detail` page
 
 ## Known issues
-1. The source Rendition is not properply set.
-2. The width and heigth for the Original public link aren't set yet.
-3. The Focal point viewer component hasn't yet been created.
-4. Retrieve label of current culture instead of default culture in publicLinkViewer
+1. The width and heigth for the Original public link aren't set yet. This is because the CroppingConfiguration object is null when a public link isn't cropped. We need to find a way to retrieve the dimensions of the relevant rendition here.
+2. The Focal point viewer component hasn't yet been created.
