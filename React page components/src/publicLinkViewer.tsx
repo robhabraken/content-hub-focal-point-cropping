@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log("Loading public links (version 3.0.16)");
+            console.log("Loading public links");
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")

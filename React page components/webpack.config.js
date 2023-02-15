@@ -5,7 +5,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 module.exports = {
     entry: {
-        publicLinkViewer: './src/Focal Point Cropping/publicLinkApp.tsx',
+        publicLinkViewer: './src/publicLinkApp.tsx',
     },
     node: {
         fs: 'empty'
