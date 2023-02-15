@@ -5,7 +5,7 @@ import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/d
 import React, { useEffect, useState } from "react";
 import ErrorBoundary from "./ErrorBoundary";
 import Table from '@mui/material/Table';
-import { Box, Button, CircularProgress, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IRendition, Rendition } from "./types";
 
@@ -53,23 +53,23 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
 
                             return (
                                 <>
-                                    <div>
+                                    <ThemeProvider theme={context.theme}>
                                         <Typography variant="caption">
-                                            <Button title="Refresh" aria-label="Refresh" variant="text" startIcon={<RefreshIcon />} onClick={refresh} /> {publicLinkQueryResult?.length} items
+                                            {publicLinkQueryResult?.length} items <Button aria-label="Refresh" data-tip="Refresh" data-for="toolTipComponent" data-place="top" variant="text" color="inherit" size="small" startIcon={<RefreshIcon />} onClick={refresh} />
                                         </Typography>
+                                    </ThemeProvider>
 
-                                        <TableContainer>
-                                            <Table>
-                                                <TableBody>
-                                                    {
-                                                        publicLinkQueryResult?.map((entity, index) =>
-                                                            renderPublicLink(entity, index, renditions)
-                                                        )
-                                                    }
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </div>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                {
+                                                    publicLinkQueryResult?.map((entity, index) =>
+                                                        renderPublicLink(entity, index, renditions)
+                                                    )
+                                                }
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
                                 </>
                             );
                         }
@@ -129,20 +129,24 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         }
 
         return (
-            <TableRow key={"row_" + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell size="small">
+            <TableRow key={"row_" + index} hover={true}>
+                <TableCell size="small" align="center">
                     <a href={entityUrl} target="_blank">
                         <img src={entityUrl + "&t=thumbnail"} alt="Image preview" />
                     </a>
                 </TableCell>
                 <TableCell valign="top">
-                    <Typography variant="body1">
-                        <strong>{title}</strong>
-                    </Typography>
-                    <Box>
-                        <Typography variant="caption">
-                            <strong>{rendition.label}</strong> · {croppingType} · {width} x {height} px
+                    <ThemeProvider theme={context.theme}>
+                        <Typography variant="body1">
+                            {title}
                         </Typography>
+                    </ThemeProvider>
+                    <Box>
+                        <ThemeProvider theme={context.theme}>
+                            <Typography variant="body2" color={"rgba(0, 0, 0, 0.54)"}>
+                                {rendition.label} · {croppingType} · {width} x {height} px
+                            </Typography>
+                        </ThemeProvider>
                     </Box>
                 </TableCell>
             </TableRow>

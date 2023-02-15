@@ -1,7 +1,7 @@
-# Content Hub - Focal point cropping v3.0 Alpha
+# Content Hub - Focal point cropping v3.0.1
 
 ***IMPORTANT***
-This is an alpha version of the Focal point cropping HTML components converted into React components. Currently, only the Public Link viewer has been converted.
+This is a work-in-progress version of the Focal point cropping HTML components converted into React components. Currently, only the Public Link viewer has been converted.
 
 In order to install the Public Link viewer, execute the following steps:
 
@@ -26,3 +26,4 @@ In order to install the Public Link viewer, execute the following steps:
 
 ## Known issues
 1. The Focal point viewer component hasn't yet been created.
+2. The styling doesn't completely comply with the Content Hub UI. I do not yet know how to adopt or apply the included overrides for the MuiTypography in the context.theme object for example (or any other MUI component). The body2 typography should be lighter (alpha 0.54, which I've temporarily added hardcoded), the overall margins should be less (mostly the outer padding), and the refresh button should be square for example. Maybe the ThemeProvider isn't necessary if I correctly apply the full theme override. I have filed a support ticket to get some guidance on this matter.
