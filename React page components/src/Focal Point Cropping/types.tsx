@@ -18,13 +18,17 @@ export interface IContentHubContext {
 }
 
 export interface IRendition {
-    label: string,
-    contentType: string
+    label: string;
+    contentType: string;
+    width: number;
+    height: number;
 }
 
 export class Rendition implements IRendition {
     label!: string;
     contentType!: string;
+    width!: number;
+    height!: number;
 }
 
 export interface CroppingConfiguration {

@@ -21,7 +21,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
         if (!isLoading) {
             setIsLoading(true);
 
-            console.log("Loading public links (version 3.0.15)");
+            console.log("Loading public links (version 3.0.16)");
             loadPublicLinks(context.client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
@@ -117,8 +117,8 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
 
         const conversionConfiguration = extractConversionConfiguration(entity);
         var croppingType = conversionConfiguration?.cropping_configuration?.cropping_type ?? "Uncropped";
-        var width = conversionConfiguration?.width ?? conversionConfiguration?.cropping_configuration?.width ?? 0;
-        var height = conversionConfiguration?.height ?? conversionConfiguration?.cropping_configuration?.height ?? 0;
+        var width = conversionConfiguration?.width ?? rendition.width ?? 0;
+        var height = conversionConfiguration?.height ?? rendition.height ?? 0;
 
         if (croppingType === "Entropy") {
             croppingType = "Smart crop";
@@ -181,9 +181,28 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
                                 label = name;
                             }
                         }
+                        
+                        // retrieve rendition dimensions for displaying uncropped public link dimensions
+                        var fileLocation = renditionsData[index]["file_location"];
+                        var width, height;
+                        if (fileLocation) {
+                            var files = fileLocation["files"];
+                            if (files && files.length > 0) {
+                                var file = files[0];
+                                if (file) {
+                                    var metadata = file["metadata"];
+                                    if (metadata) {
+                                        width = metadata["width"] ?? 0;
+                                        height = metadata["height"] ?? 0;
+                                    }
+                                }
+                            }
+                        }
 
                         rendition.label = label;
                         rendition.contentType = "Unknown";
+                        rendition.width = width;
+                        rendition.height = height;
 
                         // try to retrieve content type and store for further reference
                         var fileLocation = renditionsData[index]["file_location"];
