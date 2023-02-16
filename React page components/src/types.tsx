@@ -49,3 +49,14 @@ export interface ConversionConfiguration {
     height: number;
     ratio: Ratio;
 }
+
+export interface IFileProperties {
+    width: number;
+    height: number;
+    group: string;
+}
+
+export interface IMainFile {
+    locations: any;
+    properties: IFileProperties;
+}
