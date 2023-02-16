@@ -5,8 +5,8 @@ import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/d
 import React, { useEffect, useState } from "react";
 import ErrorBoundary from "./ErrorBoundary";
 import Table from '@mui/material/Table';
-import { Box, Button, CircularProgress, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
+import PhotoIcon from '@mui/icons-material/Photo';
 import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IRendition, Rendition } from "./types";
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
@@ -22,19 +22,19 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setIsLoading(true);
 
             console.log("Loading focal point editor");
-            //loadPublicLinks(context.client, context.options.entityId)
-            //   .then(publicLinks => {
-            //        console.log("Loading focal point editor")
-            //      setPublicLinkQueryResult(publicLinks);
-            //        setIsLoaded(true);
-            //    });
+            load(context.client, context.options.entityId)
+               .then(entity => {
+                    console.log("Loading focal point editor")
+                    // setPublicLinkQueryResult(entity);
+                    setIsLoaded(true);
+                });
         }
     });
 
-    function refresh() {
-        setIsLoading(false);
-        setIsLoaded(false);
-        setPublicLinkQueryResult(undefined);
+    function edit() {
+    }
+
+    function save() {
     }
 
     return (
@@ -53,7 +53,30 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
                             return (
                                 <>
-                                    hello world
+                                    <ThemeProvider theme={context.theme}>
+                                        <Box id="imagePlaceholder" component="div" display="flex" justifyContent="center">
+                                            <PhotoIcon style={{
+                                                fontSize: 160,
+                                                width: 160,
+                                                height: 160,
+                                                marginTop: 80,
+                                                marginBottom: 80,
+                                                opacity: 0.25
+                                            }} />
+                                        </Box>
+                                        <Box id="focalPointViewer">
+                                            <Box className="image-wrapper">
+                                                <Box className="previewFrame">
+                                                    <img className="previewImage" src="" />
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                        <Box display="flex" justifyContent="flex-end">
+                                            <Button variant="outlined" color="secondary" onClick={edit}>Edit</Button>
+                                            <Box sx={{ m: 1 }} />
+                                            <Button variant="outlined" color="primary" disabled onClick={save}>Save</Button>
+                                        </Box>
+                                    </ThemeProvider>
                                 </>
                             );
                         }
@@ -62,4 +85,14 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             </OptionsContext.Provider>
         </ErrorBoundary>
     )
+
+    async function load(client: IContentHubClient, entityId: number) {
+        var entity = await client.entities.getAsync(entityId, EntityLoadConfiguration.Full);
+
+        if (entity == null) {
+            return new Array<IEntity>();
+        }
+
+        return entity;
+    }
 }
