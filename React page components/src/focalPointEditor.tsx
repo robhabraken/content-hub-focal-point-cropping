@@ -20,8 +20,15 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     
     const [isLocked, setIsLocked] = useState(true);
     const [editButtonText, setEditButtonText] = useState("Edit");
+
+    const [isResizing, setIsResizing] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [remove, setRemove] = useState(false);
     
-    const [item, setItem] = useState<IEntity>();
+    const [item, setItem] = useState<IEntity>(); // doesn't work yet
+
+    const focalPoint = {}; // not yet tested / implemented
+    const focalPointRadius = 20;
 
     useEffect(() => {
         if (!isLoading) {
@@ -115,7 +122,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             return;
         }
 
-        // ..
+        // TODO: load image and place on img element
+        // TODO: load canvas and bind event listeners
 
         console.log(entity.getPropertyValue("FocalPointX"));
         console.log(entity.getPropertyValue("FocalPointY"));
