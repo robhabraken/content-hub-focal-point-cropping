@@ -17,6 +17,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [publicLinkQueryResult, setPublicLinkQueryResult] = useState<IEntity[]>();
     const [renditions, setRenditions] = useState<{ [id: string]: IRendition }>();
 
+    const [isLocked, setIsLocked] = useState(true);
+    const [editButtonText, setEditButtonText] = useState("Edit");
+
     useEffect(() => {
         if (!isLoading) {
             setIsLoading(true);
@@ -24,18 +27,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             console.log("Loading focal point editor");
             load(context.client, context.options.entityId)
                .then(entity => {
-                    console.log("Loading focal point editor")
+                    console.log("Focal point editor loaded")
                     // setPublicLinkQueryResult(entity);
                     setIsLoaded(true);
                 });
         }
     });
-
-    function edit() {
-    }
-
-    function save() {
-    }
 
     return (
         <ErrorBoundary>
@@ -72,9 +69,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             </Box>
                                         </Box>
                                         <Box display="flex" justifyContent="flex-end">
-                                            <Button variant="outlined" color="secondary" onClick={edit}>Edit</Button>
+                                            <Button variant="outlined" color="secondary" onClick={edit}>{editButtonText}</Button>
                                             <Box sx={{ m: 1 }} />
-                                            <Button variant="outlined" color="primary" disabled onClick={save}>Save</Button>
+                                            <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
                                         </Box>
                                     </ThemeProvider>
                                 </>
@@ -94,5 +91,51 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         return entity;
+    }
+
+    function edit() {
+        if (isLocked) {
+            unlock();
+        } else {
+            previewImageLoaded();
+            lock();
+        }
+    }
+
+    function save() {
+        if (!isLocked) {
+            setFocalPoint();
+            lock();
+        }
+    }
+
+    function lock() {
+        setEditButtonText("Edit");
+        setIsLocked(true);
+    }
+
+    function unlock() {
+        setEditButtonText("Cancel");
+        setIsLocked(false);
+    }
+
+    function previewImageLoaded() {
+
+    }
+
+    function setFocalPoint() {
+
+    }
+
+    function removeFocalPoint() {
+
+    }
+
+    function clear() {
+
+    }
+
+    function draw() {
+
     }
 }
