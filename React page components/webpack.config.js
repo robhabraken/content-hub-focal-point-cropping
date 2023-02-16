@@ -6,6 +6,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 module.exports = {
     entry: {
         publicLinkViewer: './src/publicLinkApp.tsx',
+        focalPointEditor: './src/focalPointApp.tsx'
     },
     node: {
         fs: 'empty'
