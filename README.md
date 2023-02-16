@@ -131,7 +131,7 @@ Click `Save ` at the bottom of the popup, then `Save task` on the bottom of the 
 
 ### External page components
 
-Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder `External page components`. If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder `React page components`. Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
+Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder [External page components](External%20page%20components). If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder [React page components](React%20page%20components). Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
 
 #### Optional: Show focal point details
 
