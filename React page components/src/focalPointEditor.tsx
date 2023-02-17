@@ -35,6 +35,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     var focalPoint = new FocalPoint(); // not yet tested / implemented
     var ratio = 0.0;
 
+    const [previewImage, setPreviewImage] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
     const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
 
@@ -82,7 +83,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                         { showFocalPointViewer && <Box id="focalPointViewer" style={showFocalPointViewer ? { display: 'block' } : { display: 'hidden'}}>
                                             <Box className="image-wrapper">
                                                 <Box className="previewFrame">
-                                                    <img className="previewImage" src="" />
+                                                    <img className="previewImage" src={previewImage}/>
                                                 </Box>
                                             </Box>
                                             <Box display="flex" justifyContent="flex-end">
@@ -137,12 +138,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // TODO: load image and place on img element
         // TODO: load canvas and bind event listeners
         
-        setPreviewImage(entityId);
+        setPreviewImageUrl(entityId);
 
         return entity;
     }
     
-    function setPreviewImage(entityId: number) {
+    function setPreviewImageUrl(entityId: number) {
         fetch("https://" + window.location.hostname + "/api/entities/"+ entityId + "/renditions")
             .then(response => {
                 return response.json()
@@ -151,9 +152,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                 var renditionsData = data["renditions"];
                 if (renditionsData) {
                     for (var index = 0; index < renditionsData.length; index++) {
-
-                        var rendition = new Rendition();
-
                         var renditionLink = renditionsData[index]["rendition_link"];
                         var name;
                         if (renditionLink) {
@@ -163,7 +161,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                             }
                         }
 
-                        // retrieve rendition dimensions for displaying uncropped public link dimensions
                         var fileLocation = renditionsData[index]["file_location"];
                         if (fileLocation) {
                             var files = fileLocation["files"];
@@ -173,7 +170,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                     var deliveryLink = file["delivery_link"];
                                     if (deliveryLink) {
                                         var href = deliveryLink["href"] ?? "";
-                                        console.log(href);
+                                        setPreviewImage(href);
                                         break;
                                     }
                                 }
