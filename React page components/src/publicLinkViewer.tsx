@@ -156,9 +156,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
     function getRenditions(entityId: number) {
         var renditions: { [id: string]: IRendition } = {};
 
-        const contentHubBaseUrl = "https://react-demo.sitecoresandbox.cloud/";
-
-        fetch(contentHubBaseUrl + "api/entities/" + entityId + "/renditions")
+        fetch("https://" + window.location.hostname + "/api/entities/"+ entityId + "/renditions")
             .then(response => {
                 return response.json()
             })

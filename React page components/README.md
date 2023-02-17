@@ -9,9 +9,8 @@ This is a work-in-progress version of the Focal point cropping HTML components c
 Prepare and build the React components locally
 
  1. Go to `/React page components` folder
- 2. Replace the contentHubBaseUrl constant with your instance URL
- 3. Run `npm install`. This will ensure that the packages are downloaded and installed
- 4. Run `npm run build`. This will trigger a build
+ 2. Run `npm install`. This will ensure that the packages are downloaded and installed
+ 3. Run `npm run build`. This will trigger a build
 
 In order to install the Public Link viewer, execute the following steps:
 
