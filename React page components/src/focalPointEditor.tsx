@@ -81,9 +81,20 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             }} />
                                         </Box>}
                                         { showFocalPointViewer && <Box id="focalPointViewer">
-                                            <Box className="image-wrapper">
+                                            <Box marginBottom="16px">
                                                 <Box className="previewFrame">
-                                                    <img className="previewImage" src={previewImage}/>
+                                                    <Box id="focalPointContainer" display="inline-block" position="relative">
+                                                        <img src={previewImage} style={{ maxWidth: '100%' }} />
+                                                        <canvas id="focalCanvas" style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            zIndex: 20,
+                                                            userSelect: 'none'
+                                                        }} ></canvas>
+                                                    </Box>
                                                 </Box>
                                             </Box>
                                             <Box display="flex" justifyContent="flex-end">
@@ -139,6 +150,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // TODO: load canvas and bind event listeners
         
         setPreviewImageUrl(entityId);
+
+        // place delegate on preview image loaded
 
         return entity;
     }
