@@ -184,6 +184,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                     if (deliveryLink) {
                                         var href = deliveryLink["href"] ?? "";
                                         setPreviewImage(href);
+                                        previewImageLoaded();
                                         break;
                                     }
                                 }
