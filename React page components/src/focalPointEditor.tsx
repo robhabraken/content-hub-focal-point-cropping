@@ -8,7 +8,6 @@ import React, { useEffect, useState } from "react";
 import ErrorBoundary from "./errorBoundary";
 import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
-import { getRenditions } from "./functions";
 import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IMainFile, FocalPoint, IRendition, Rendition } from "./types";
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
@@ -28,7 +27,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [remove, setRemove] = useState(false);
     
     const [item, setItem] = useState<IEntity>(); // doesn't work yet
-    const [renditions, setRenditions] = useState<{ [id: string]: IRendition }>();
 
     var itemWidth = 0;
     var itemHeight = 0;
@@ -47,7 +45,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             console.log("Loading focal point editor");
             initialize(context.client, context.options.entityId)
                .then(entity => {
-                    console.log("Focal point editor loaded")
+                    console.log("Focal point editor loaded");
                     setItem(entity);
                     setIsLoaded(true);
                 });
@@ -138,12 +136,52 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
         // TODO: load image and place on img element
         // TODO: load canvas and bind event listeners
-
-        var renditions = getRenditions(entityId, context.options.culture);
-        //setRenditions(getRenditions(entityId, context.options.culture));
         
+        setPreviewImage(entityId);
 
         return entity;
+    }
+    
+    function setPreviewImage(entityId: number) {
+        fetch("https://" + window.location.hostname + "/api/entities/"+ entityId + "/renditions")
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                var renditionsData = data["renditions"];
+                if (renditionsData) {
+                    for (var index = 0; index < renditionsData.length; index++) {
+
+                        var rendition = new Rendition();
+
+                        var renditionLink = renditionsData[index]["rendition_link"];
+                        var name;
+                        if (renditionLink) {
+                            name = renditionLink["name"];
+                            if (name != "downloadPreview") {
+                                continue;
+                            }
+                        }
+
+                        // retrieve rendition dimensions for displaying uncropped public link dimensions
+                        var fileLocation = renditionsData[index]["file_location"];
+                        if (fileLocation) {
+                            var files = fileLocation["files"];
+                            if (files && files.length > 0) {
+                                var file = files[0];
+                                if (file) {
+                                    var deliveryLink = file["delivery_link"];
+                                    if (deliveryLink) {
+                                        var href = deliveryLink["href"] ?? "";
+                                        console.log(href);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
     }
 
     function edit() {
