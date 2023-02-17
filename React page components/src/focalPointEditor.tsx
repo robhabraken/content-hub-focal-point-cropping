@@ -80,7 +80,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                                 opacity: 0.25
                                             }} />
                                         </Box>}
-                                        { showFocalPointViewer && <Box id="focalPointViewer" style={showFocalPointViewer ? { display: 'block' } : { display: 'hidden'}}>
+                                        { showFocalPointViewer && <Box id="focalPointViewer">
                                             <Box className="image-wrapper">
                                                 <Box className="previewFrame">
                                                     <img className="previewImage" src={previewImage}/>
