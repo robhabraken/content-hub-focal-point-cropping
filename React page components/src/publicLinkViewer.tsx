@@ -3,7 +3,7 @@ import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contrac
 import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
 import React, { useEffect, useState } from "react";
-import ErrorBoundary from "./ErrorBoundary";
+import ErrorBoundary from "./errorBoundary";
 import Table from '@mui/material/Table';
 import { Box, Button, CircularProgress, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';

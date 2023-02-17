@@ -5,7 +5,7 @@ import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contrac
 import { Entity, IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
 import React, { useEffect, useState } from "react";
-import ErrorBoundary from "./ErrorBoundary";
+import ErrorBoundary from "./errorBoundary";
 import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
 import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IMainFile, FocalPoint, IRendition, Rendition } from "./types";
