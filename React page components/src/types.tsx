@@ -60,3 +60,13 @@ export interface IMainFile {
     locations: any;
     properties: IFileProperties;
 }
+
+export interface IFocalPoint {
+    x: number;
+    y: number;
+}
+
+export class FocalPoint implements IFocalPoint {
+    x!: number;
+    y!: number;
+}
