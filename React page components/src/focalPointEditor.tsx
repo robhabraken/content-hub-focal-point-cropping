@@ -43,11 +43,10 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setIsLoading(true);
 
             console.log("Loading focal point editor");
-            loadAsset(context.client, context.options.entityId)
+            initialize(context.client, context.options.entityId)
                .then(entity => {
                     console.log("Focal point editor loaded")
                     setItem(entity);
-                    initialize();
                     setIsLoaded(true);
                 });
         }
@@ -102,7 +101,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         </ErrorBoundary>
     )
 
-    async function loadAsset(client: IContentHubClient, entityId: number) {
+    async function initialize(client: IContentHubClient, entityId: number) {
         var entity = await client.entities.getAsync(entityId, EntityLoadConfiguration.Full);
         
         if (entity == null) {
@@ -140,10 +139,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // TODO: load canvas and bind event listeners
 
         return entity;
-    }
-
-    function initialize() {
-        // doesn't work yet
     }
 
     function edit() {
