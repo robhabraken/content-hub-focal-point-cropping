@@ -33,7 +33,7 @@ export const getRenditions = (entityId: number, culture: string) => {
                     
                     // retrieve rendition dimensions for displaying uncropped public link dimensions
                     var fileLocation = renditionsData[index]["file_location"];
-                    var width, height;
+                    var width, height, href;
                     if (fileLocation) {
                         var files = fileLocation["files"];
                         if (files && files.length > 0) {
@@ -44,6 +44,11 @@ export const getRenditions = (entityId: number, culture: string) => {
                                     width = metadata["width"] ?? 0;
                                     height = metadata["height"] ?? 0;
                                 }
+
+                                var deliveryLink = file["delivery_link"];
+                                if (deliveryLink) {
+                                    href = deliveryLink["href"] ?? "";
+                                }
                             }
                         }
                     }
@@ -52,6 +57,7 @@ export const getRenditions = (entityId: number, culture: string) => {
                     rendition.contentType = "Unknown";
                     rendition.width = width;
                     rendition.height = height;
+                    rendition.href = href;
 
                     // try to retrieve content type and store for further reference
                     var fileLocation = renditionsData[index]["file_location"];

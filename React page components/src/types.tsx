@@ -22,6 +22,7 @@ export interface IRendition {
     contentType: string;
     width: number;
     height: number;
+    href: string;
 }
 
 export class Rendition implements IRendition {
@@ -29,6 +30,7 @@ export class Rendition implements IRendition {
     contentType!: string;
     width!: number;
     height!: number;
+    href!: string;
 }
 
 export interface CroppingConfiguration {

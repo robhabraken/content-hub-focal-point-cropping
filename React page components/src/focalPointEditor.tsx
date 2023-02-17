@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import ErrorBoundary from "./errorBoundary";
 import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
+import { getRenditions } from "./functions";
 import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IMainFile, FocalPoint, IRendition, Rendition } from "./types";
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
@@ -27,6 +28,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [remove, setRemove] = useState(false);
     
     const [item, setItem] = useState<IEntity>(); // doesn't work yet
+    const [renditions, setRenditions] = useState<{ [id: string]: IRendition }>();
 
     var itemWidth = 0;
     var itemHeight = 0;
@@ -111,7 +113,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
         // MainFile not (yet) available (image may still be in media processing), display placeholder
         var mainFile = entity.getPropertyValue("MainFile") as IMainFile;
-        console.log(mainFile);
         if (!mainFile || !mainFile.properties) {
             setShowPlaceHolder(true);
             setShowFocalPointViewer(false);
@@ -137,6 +138,10 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
         // TODO: load image and place on img element
         // TODO: load canvas and bind event listeners
+
+        var renditions = getRenditions(entityId, context.options.culture);
+        //setRenditions(getRenditions(entityId, context.options.culture));
+        
 
         return entity;
     }
