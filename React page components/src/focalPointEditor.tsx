@@ -19,10 +19,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [showPlaceHolder, setShowPlaceHolder] = useState(false);
     const [showFocalPointViewer, setShowFocalPointViewer] = useState(true);
     
-    const [isLocked, setIsLocked] = useState(true);
     const [editButtonText, setEditButtonText] = useState("Edit");
 
-    const [isResizing, setIsResizing] = useState(false);
+    const [isLocked, setIsLocked] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [remove, setRemove] = useState(false);
     
@@ -40,6 +39,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
 
     useEffect(() => {
+        window.addEventListener('resize', resize);
+
         if (!isLoading) {
             setIsLoading(true);
 
@@ -51,6 +52,10 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                     setIsLoaded(true);
                 });
         }
+
+        return () => {
+            window.removeEventListener('resize', resize);
+          }
     });
 
     return (
@@ -196,6 +201,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function edit() {
+        console.log("edit " + isLocked);
         if (isLocked) {
             unlock();
         } else {
@@ -205,23 +211,36 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function save() {
+        console.log("save");
         if (!isLocked) {
             setFocalPoint();
             lock();
         }
     }
 
+    function resize() {
+        console.log("resize");
+        console.log("isLocked ja? " + isLocked);
+        previewImageLoaded();
+        if (!isLocked) {
+            lock();
+        }
+    }
+
     function lock() {
+        console.log("lock");
         setEditButtonText("Edit");
         setIsLocked(true);
     }
 
     function unlock() {
+        console.log("unlock");
         setEditButtonText("Cancel");
         setIsLocked(false);
     }
 
     function previewImageLoaded() {
+        console.log("previewImageLoaded");
         // var previewWidth = this._previewImage.width; TODO
         // this._ratio = this._itemWidth / previewWidth; TODO
 
@@ -242,6 +261,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseDown(sender: any, args: any) { // check types
+        console.log("focalCanvasMouseDown");
         if (isLocked) {
             return;
         }
@@ -265,6 +285,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseMove(sender: any, args: any) { // check types
+        console.log("focalCanvasMouseMove");
         if (isLocked) {
             return;
         }
@@ -282,6 +303,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseUp(sender: any, args: any) { // check types
+        console.log("focalCanvasMouseUp");
         if (isLocked) {
             return;
         }
@@ -296,6 +318,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseLeave(sender: any, args: any) { // check types
+        console.log("focalCanvasMouseLeave");
         if (isLocked) {
             return;
         }
@@ -307,6 +330,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function cursorIsInFocalPointMarker(x: number, y: number) {
+        console.log("cursorIsInFocalPointMarker");
         var isCollision = false;
         var offset = focalPointRadius;
 
@@ -323,12 +347,14 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function beginSelection(x: number, y: number) {
+        console.log("beginSelection");
         focalPoint.x = x;
         focalPoint.y = y;
         setIsDragging(true);
     }
 
     function endSelection(sender: any) { // check types
+        console.log("endSelection");
         setIsDragging(false);
 
         var x = sender.offsetX,
@@ -341,6 +367,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function setFocalPoint() {
+        console.log("setFocalPoint");
         var x = Math.ceil(focalPoint.x * ratio),
             y = Math.ceil(focalPoint.y * ratio);
 
@@ -354,6 +381,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function removeFocalPoint() {
+        console.log("removeFocalPoint");
         setIsDragging(false);
         setRemove(false);
 
@@ -363,10 +391,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function clear() {
+        console.log("clear");
         // TODO: clear canvas
     }
 
     function draw() {
+        console.log("draw");
         clear();
 
         // TODO: draw ring and marker
