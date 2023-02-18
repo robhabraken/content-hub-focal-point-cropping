@@ -396,6 +396,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         draw();
     }
 
+    // TODO: ISSUE: save doesn't seem to work
+
     function saveFocalPoint() {
         console.log("saveFocalPoint");
         var x = Math.ceil(focalPoint.x * ratio),
@@ -409,6 +411,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         focalPointXProperty?.setValue(x);
         focalPointYProperty?.setValue(y);
     }
+
+    // TODO: ISSUE: removing only works _after_ storing the focal point (save and edit), not when deleting a freshly placed focal point..
 
     function removeFocalPoint() {
         console.log("removeFocalPoint");
