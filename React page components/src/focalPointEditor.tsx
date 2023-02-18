@@ -28,12 +28,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     
     const [item, setItem] = useState<IEntity>(); // doesn't work yet
 
-    var itemWidth = 0;
-    var itemHeight = 0;
-
     const focalPointRadius = 20;
-    var focalPoint = new FocalPoint(); // not yet tested / implemented
-    var ratio = 0.0;
+
+    const [itemWidth, setItemWidth] = useState(0);
+    const [itemHeight, setItemHeight] = useState(0);
+    const [focalPoint, setFocalPoint] = useState(new FocalPoint());
+    const [ratio, setRatio] = useState(0.0);
 
     const [previewImage, setPreviewImage] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
@@ -136,8 +136,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         // retrieve main properties of asset to initalize focal point viewer
-        itemWidth = mainFile.properties.width;
-        itemHeight = mainFile.properties.height;
+        setItemWidth(mainFile.properties.width);
+        setItemHeight(mainFile.properties.height);
         var itemGroup = mainFile.properties.group;
 
         // focal point viewer not applicable for asset media types Videos and Documents (or other unforeseen asset types)
@@ -214,7 +214,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     function save() {
         console.log("save");
         if (!isLocked) {
-            setFocalPoint();
+            saveFocalPoint();
             lock();
         }
     }
@@ -379,8 +379,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         draw();
     }
 
-    function setFocalPoint() {
-        console.log("setFocalPoint");
+    function saveFocalPoint() {
+        console.log("saveFocalPoint");
         var x = Math.ceil(focalPoint.x * ratio),
             y = Math.ceil(focalPoint.y * ratio);
 
@@ -398,8 +398,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         setIsDragging(false);
         setRemove(false);
 
-        focalPoint = new FocalPoint();
-        setFocalPoint();
+        setFocalPoint(new FocalPoint());
+        saveFocalPoint();
         clear();
     }
 
