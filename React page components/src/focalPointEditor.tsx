@@ -4,7 +4,7 @@ import { ICultureInsensitiveProperty  } from "@sitecore/sc-contenthub-webclient-
 import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base";
 import { Entity, IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import ErrorBoundary from "./errorBoundary";
 import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
@@ -18,7 +18,10 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     
     const [showPlaceHolder, setShowPlaceHolder] = useState(false);
     const [showFocalPointViewer, setShowFocalPointViewer] = useState(true);
-    
+
+    const previewImage = useRef<HTMLImageElement>(null);
+    const focalCanvas = useRef<HTMLCanvasElement>(null);
+
     const [editButtonText, setEditButtonText] = useState("Edit");
 
     const [isLocked, setIsLocked] = useState(true);
@@ -26,7 +29,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [isResizing, setIsResizing] = useState(false);
     const [remove, setRemove] = useState(false);
     
-    const [item, setItem] = useState<IEntity>(); // doesn't work yet
+    const [item, setItem] = useState<IEntity>(); // not really used yet...
 
     const focalPointRadius = 20;
 
@@ -35,7 +38,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [focalPoint, setFocalPoint] = useState(new FocalPoint());
     const [ratio, setRatio] = useState(0.0);
 
-    const [previewImage, setPreviewImage] = useState("");
+    const [previewImageSrc, setPreviewImageSrc] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
     const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
 
@@ -90,8 +93,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             <Box marginBottom="16px">
                                                 <Box className="previewFrame">
                                                     <Box id="focalPointContainer" display="inline-block" position="relative">
-                                                        <img src={previewImage} style={{ maxWidth: '100%' }} />
-                                                        <canvas id="focalCanvas" style={{
+                                                        <img ref={previewImage} src={previewImageSrc} style={{ maxWidth: '100%' }} />
+                                                        <canvas ref={focalCanvas} style={{
                                                             width: '100%',
                                                             height: '100%',
                                                             position: 'absolute',
@@ -99,7 +102,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                                             left: 0,
                                                             zIndex: 20,
                                                             userSelect: 'none'
-                                                        }} ></canvas>
+                                                        }}
+                                                            onMouseDown={focalCanvasMouseDown}
+                                                            onMouseMove={focalCanvasMouseMove}
+                                                            onMouseUp={focalCanvasMouseUp}
+                                                            onMouseLeave={focalCanvasMouseLeave}
+                                                        ></canvas>
                                                     </Box>
                                                 </Box>
                                             </Box>
@@ -152,17 +160,14 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         var focalPointY = entity.getProperty<ICultureInsensitiveProperty>("FocalPointY");
         setFocalPointYProperty(focalPointY!);
 
-        // TODO: load image and place on img element
         // TODO: load canvas and bind event listeners
         
-        setPreviewImageUrl(entityId);
-
-        // place delegate on preview image loaded
+        setPreviewImage(entityId);
 
         return entity;
     }
     
-    function setPreviewImageUrl(entityId: number) {
+    function setPreviewImage(entityId: number) {
         fetch("https://" + window.location.hostname + "/api/entities/"+ entityId + "/renditions")
             .then(response => {
                 return response.json()
@@ -189,7 +194,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                     var deliveryLink = file["delivery_link"];
                                     if (deliveryLink) {
                                         var href = deliveryLink["href"] ?? "";
-                                        setPreviewImage(href);
+                                        setPreviewImageSrc(href);
                                         previewImageLoaded();
                                         break;
                                     }
@@ -252,15 +257,22 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         setIsLocked(false);
     }
 
+    // TODO: ISSUE: on the first call (when the page is rendered and initialize is executed, previewImageLoaded doens't work because
+    // all the values are 0 that will be set by setState eventually...)
+
     function previewImageLoaded() {
         console.log("previewImageLoaded");
-        // var previewWidth = this._previewImage.width; TODO
-        // this._ratio = this._itemWidth / previewWidth; TODO
+        if (!previewImage.current || !focalCanvas.current) {
+            return;
+        }
+
+        var previewWidth = previewImage.current.width;
+        setRatio(itemWidth / previewWidth);
 
         clear();
 
-        // this._focalCanvas.width = this._previewImage.width; TODO
-        // this._focalCanvas.height = this._previewImage.height; TODO
+        focalCanvas.current.width = previewImage.current.width;
+        focalCanvas.current.height = previewImage.current.height;
 
         var focalPointX = focalPointXProperty ? focalPointXProperty.getValue() as number : 0;
         var focalPointY = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
@@ -273,14 +285,24 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
     }
 
-    function focalCanvasMouseDown(sender: any, args: any) { // check types
+    function getOffsetX(sender: any) {
+        var test = sender.currentTarget.getBoundingClientRect();
+        return Math.round(sender.pageX - window.pageXOffset - test.left)
+    }
+
+    function getOffsetY(sender: any) {
+        var test = sender.currentTarget.getBoundingClientRect();
+        return Math.round(sender.pageY - window.pageYOffset - test.top);
+    }
+
+    function focalCanvasMouseDown(sender: any) {
         console.log("focalCanvasMouseDown");
         if (isLocked) {
             return;
         }
-
-        var x = sender.offsetX,
-            y = sender.offsetY;
+        
+        var x = getOffsetX(sender),
+            y = getOffsetY(sender);
 
             var focalPointX = focalPointXProperty ? focalPointXProperty.getValue() as number : 0;
             var focalPointY = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
@@ -297,7 +319,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         sender.nativeEvent.stopImmediatePropagation();
     }
 
-    function focalCanvasMouseMove(sender: any, args: any) { // check types
+    function focalCanvasMouseMove(sender: any) {
         console.log("focalCanvasMouseMove");
         if (isLocked) {
             return;
@@ -309,13 +331,13 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setRemove(false);
 
             // update focal point and marker while dragging
-            focalPoint.x = sender.offsetX;
-            focalPoint.y = sender.offsetY;
+            focalPoint.x = getOffsetX(sender);
+            focalPoint.y = getOffsetY(sender);
             draw();
         }
     }
 
-    function focalCanvasMouseUp(sender: any, args: any) { // check types
+    function focalCanvasMouseUp(sender: any) {
         console.log("focalCanvasMouseUp");
         if (isLocked) {
             return;
@@ -330,12 +352,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
     }
 
-    function focalCanvasMouseLeave(sender: any, args: any) { // check types
+    function focalCanvasMouseLeave(sender: any) {
         console.log("focalCanvasMouseLeave");
         if (isLocked) {
             return;
         }
-
+        
         if (isDragging) {
             // when leaving the canvas while dragging, assume final position
             endSelection(sender);
@@ -366,12 +388,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         setIsDragging(true);
     }
 
-    function endSelection(sender: any) { // check types
+    function endSelection(sender: any) {
         console.log("endSelection");
         setIsDragging(false);
 
-        var x = sender.offsetX,
-            y = sender.offsetY;
+        var x = getOffsetX(sender),
+            y = getOffsetY(sender);
         
         focalPoint.x = x;
         focalPoint.y = y;
