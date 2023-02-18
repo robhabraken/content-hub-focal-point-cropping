@@ -15,6 +15,8 @@ const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPa
 export const FocalPointEditor = ({ context }: { context: IContentHubContext }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [entity, setEntity] = useState<IEntity>();
     
     const [showPlaceHolder, setShowPlaceHolder] = useState(false);
     const [showFocalPointViewer, setShowFocalPointViewer] = useState(true);
@@ -50,6 +52,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             initialize(context.client, context.options.entityId)
                .then(entity => {
                     console.log("Focal point editor loaded");
+                    setEntity(entity);
                     setIsLoaded(true);
                 });
         }
@@ -152,10 +155,14 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         var focalPointX = entity.getProperty<ICultureInsensitiveProperty>("FocalPointX");
-        setFocalPointXProperty(focalPointX!);
+        if (focalPointX) {
+            setFocalPointXProperty(focalPointX);
+        }
         
         var focalPointY = entity.getProperty<ICultureInsensitiveProperty>("FocalPointY");
-        setFocalPointYProperty(focalPointY!);
+        if (focalPointY) {
+            setFocalPointYProperty(focalPointY);
+        }
         
         setPreviewImage(entityId);
 
@@ -396,9 +403,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         draw();
     }
 
-    // TODO: ISSUE: save doesn't seem to work
-
-    function saveFocalPoint() {
+    async function saveFocalPoint() {
         console.log("saveFocalPoint");
         var x = Math.ceil(focalPoint.x * ratio),
             y = Math.ceil(focalPoint.y * ratio);
@@ -410,6 +415,10 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // store the focal point coordinates on the asset
         focalPointXProperty?.setValue(x);
         focalPointYProperty?.setValue(y);
+
+        if (entity) {
+            await context.client.entities.saveAsync(entity);
+        }
     }
 
     // TODO: ISSUE: removing only works _after_ storing the focal point (save and edit), not when deleting a freshly placed focal point..
