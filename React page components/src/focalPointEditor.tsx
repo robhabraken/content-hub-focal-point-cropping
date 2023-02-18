@@ -23,6 +23,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
     const [isLocked, setIsLocked] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
     const [remove, setRemove] = useState(false);
     
     const [item, setItem] = useState<IEntity>(); // doesn't work yet
@@ -219,11 +220,23 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function resize() {
-        console.log("resize");
-        console.log("isLocked ja? " + isLocked);
-        previewImageLoaded();
-        if (!isLocked) {
-            lock();
+        if (!isResizing) {
+            setIsResizing(true);
+
+            // limit the amount of resize events by handling one every half a second
+            setTimeout(() => {
+                setIsResizing(false);
+
+                // if the window is resized, the preview image has a different dimension,
+                // requiring us to recalculate the ratio and redraw the focal point in the correct dimensions
+                // otherwise the mouse events wouldn't be bound to the correct relative location within the image
+                previewImageLoaded();
+
+                // also revert back to locked state, as resizing the window is seen as cancelling the focal point editing action
+                if (!isLocked) {
+                    lock();
+                }
+            }, 50);
         }
     }
 
