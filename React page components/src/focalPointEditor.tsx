@@ -28,8 +28,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [remove, setRemove] = useState(false);
-    
-    const [item, setItem] = useState<IEntity>(); // not really used yet...
 
     const focalPointRadius = 20;
 
@@ -52,7 +50,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             initialize(context.client, context.options.entityId)
                .then(entity => {
                     console.log("Focal point editor loaded");
-                    setItem(entity);
                     setIsLoaded(true);
                 });
         }
@@ -159,8 +156,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         
         var focalPointY = entity.getProperty<ICultureInsensitiveProperty>("FocalPointY");
         setFocalPointYProperty(focalPointY!);
-
-        // TODO: load canvas and bind event listeners
         
         setPreviewImage(entityId);
 
@@ -427,13 +422,42 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
     function clear() {
         console.log("clear");
-        // TODO: clear canvas
+
+        if (!focalCanvas.current) {
+            return;
+        }
+        
+        var ctx = focalCanvas.current.getContext('2d');
+        if (ctx) {
+            ctx.clearRect(0, 0, focalCanvas.current.width, focalCanvas.current.height);
+        }
     }
 
     function draw() {
         console.log("draw");
         clear();
 
-        // TODO: draw ring and marker
+        if (!focalCanvas.current) {
+            return;
+        }
+        
+        var ctx = focalCanvas.current.getContext('2d');
+        if (ctx) {
+            // draws the small white outer ring for contrast
+            ctx.beginPath();
+            ctx.arc(focalPoint.x, focalPoint.y, focalPointRadius + 1, 0, 2 * Math.PI, false);
+            ctx.strokeStyle = 'rgba(255,255,255,1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // draws the main see-through marker with (customizable) outline color
+            ctx.beginPath();
+            ctx.arc(focalPoint.x, focalPoint.y, focalPointRadius, 0, 2 * Math.PI, false);
+            ctx.strokeStyle = 'rgba(255,0,0,0.5)';
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 2;
+            ctx.fill();
+            ctx.stroke();
+        }
     }
 }
