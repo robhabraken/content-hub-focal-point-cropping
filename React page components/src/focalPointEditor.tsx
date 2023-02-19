@@ -4,7 +4,8 @@ import { ICultureInsensitiveProperty  } from "@sitecore/sc-contenthub-webclient-
 import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base";
 import { Entity, IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
 import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
@@ -35,12 +36,21 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
     const [itemWidth, setItemWidth] = useState(0);
     const [itemHeight, setItemHeight] = useState(0);
-    const [focalPoint, setFocalPoint] = useState(new FocalPoint());
+    const [focalPointX, setFocalPointX, focalPointXref] = useState(-1);
+    const [focalPointY, setFocalPointY, focalPointYref] = useState(-1);
     const [ratio, setRatio] = useState(0.0);
 
     const [previewImageSrc, setPreviewImageSrc] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
     const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
+
+    const [firstPaint, setFirstPaint] = useState(false);
+    if (previewImage.current && previewImage.current.width > 0) {
+        if (!firstPaint) {
+            previewImageLoaded();
+            setFirstPaint(true);
+        }
+    }
 
     useEffect(() => {
         window.addEventListener('resize', resize);
@@ -154,14 +164,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             return;
         }
 
-        var focalPointX = entity.getProperty<ICultureInsensitiveProperty>("FocalPointX");
-        if (focalPointX) {
-            setFocalPointXProperty(focalPointX);
-        }
-        
-        var focalPointY = entity.getProperty<ICultureInsensitiveProperty>("FocalPointY");
-        if (focalPointY) {
-            setFocalPointYProperty(focalPointY);
+        var propertyFocalPointX = entity.getProperty<ICultureInsensitiveProperty>("FocalPointX");
+        var propertyFocalPointY = entity.getProperty<ICultureInsensitiveProperty>("FocalPointY");
+        if (propertyFocalPointX && propertyFocalPointY) {
+            setFocalPointXProperty(propertyFocalPointX);
+            setFocalPointYProperty(propertyFocalPointY);
         }
         
         setPreviewImage(entityId);
@@ -197,7 +204,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                     if (deliveryLink) {
                                         var href = deliveryLink["href"] ?? "";
                                         setPreviewImageSrc(href);
-                                        previewImageLoaded();
                                         break;
                                     }
                                 }
@@ -264,19 +270,20 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         var previewWidth = previewImage.current.width;
-        setRatio(itemWidth / previewWidth);
+        var newRatio = itemWidth / previewWidth;
 
         clear();
 
         focalCanvas.current.width = previewImage.current.width;
         focalCanvas.current.height = previewImage.current.height;
 
-        var focalPointX = focalPointXProperty ? focalPointXProperty.getValue() as number : 0;
-        var focalPointY = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
+        var focalPointXPropertyValue = focalPointXProperty ? focalPointXProperty.getValue() as number : 0;
+        var focalPointYPropertyValue = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
 
-        if (focalPointX && focalPointX != 0 && focalPointY && focalPointY != 0) {
-            focalPoint.x = focalPointX / ratio;
-            focalPoint.y = focalPointY / ratio;
+        if (focalPointXPropertyValue && focalPointYPropertyValue != 0 && focalPointYPropertyValue && focalPointYPropertyValue != 0) {
+            setFocalPointX(focalPointXPropertyValue / newRatio);
+            setFocalPointY(focalPointYPropertyValue / newRatio);
+            setRatio(newRatio);
 
             draw();
         }
@@ -300,11 +307,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         var x = getOffsetX(sender),
             y = getOffsetY(sender);
 
-            var focalPointX = focalPointXProperty ? focalPointXProperty.getValue() as number : 0;
-            var focalPointY = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
-
         // if cursor is over focal point marker, assume remove (unless started dragging later on)
-        if (focalPointX && focalPointX > 0 && focalPointY &&  focalPointY > 0) {
+        if (focalPointX > 0 && focalPointY > 0) {
             if (cursorIsInFocalPointMarker(x, y)) {
                 setRemove(true);
             }
@@ -326,8 +330,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setRemove(false);
 
             // update focal point and marker while dragging
-            focalPoint.x = getOffsetX(sender);
-            focalPoint.y = getOffsetY(sender);
+            setFocalPointX(getOffsetX(sender));
+            setFocalPointY(getOffsetY(sender));
             draw();
         }
     }
@@ -358,14 +362,13 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function cursorIsInFocalPointMarker(x: number, y: number) {
-        console.log("cursorIsInFocalPointMarker");
         var isCollision = false;
         var offset = focalPointRadius;
 
-        var left = focalPoint.x - offset,
-            right = focalPoint.x + offset,
-            top = focalPoint.y - offset,
-            bottom = focalPoint.y + offset;
+        var left = focalPointX - offset,
+            right = focalPointX + offset,
+            top = focalPointY - offset,
+            bottom = focalPointY + offset;
         
         if (x >= left && x <= right && y >= top && y <= bottom) {
             isCollision = true;
@@ -375,8 +378,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function beginSelection(x: number, y: number) {
-        focalPoint.x = x;
-        focalPoint.y = y;
+        setFocalPointX(x);
+        setFocalPointY(y);
         setIsDragging(true);
     }
 
@@ -386,15 +389,15 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         var x = getOffsetX(sender),
             y = getOffsetY(sender);
         
-        focalPoint.x = x;
-        focalPoint.y = y;
+        setFocalPointX(x);
+        setFocalPointY(y);
 
         draw();
     }
 
     async function saveFocalPoint() {
-        var x = Math.ceil(focalPoint.x * ratio),
-            y = Math.ceil(focalPoint.y * ratio);
+        var x = Math.ceil(focalPointX * ratio),
+            y = Math.ceil(focalPointY * ratio);
 
         // keep focal point within bounding box of image dimensions in case of dragging cursor off canvas
         x = Math.max(Math.min(x, itemWidth), 0);
@@ -409,14 +412,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
     }
 
-    // TODO: ISSUE: removing only works _after_ storing the focal point (save and edit), not when deleting a freshly placed focal point..
-
     function removeFocalPoint() {
-        console.log("removeFocalPoint");
         setIsDragging(false);
         setRemove(false);
 
-        setFocalPoint(new FocalPoint());
+        setFocalPointX(0);
+        setFocalPointY(0);
         clear();
     }
 
@@ -432,29 +433,29 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function draw() {
-        clear();
-
         if (!focalCanvas.current) {
             return;
         }
-        
-        var ctx = focalCanvas.current.getContext('2d');
-        if (ctx) {
-            // draws the small white outer ring for contrast
-            ctx.beginPath();
-            ctx.arc(focalPoint.x, focalPoint.y, focalPointRadius + 1, 0, 2 * Math.PI, false);
-            ctx.strokeStyle = 'rgba(255,255,255,1)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
 
-            // draws the main see-through marker with (customizable) outline color
-            ctx.beginPath();
-            ctx.arc(focalPoint.x, focalPoint.y, focalPointRadius, 0, 2 * Math.PI, false);
-            ctx.strokeStyle = 'rgba(255,0,0,0.5)';
-            ctx.fillStyle = 'rgba(255,255,255,0.5)';
-            ctx.lineWidth = 2;
-            ctx.fill();
-            ctx.stroke();
+        if (focalPointXref.current >= 0 || focalPointYref.current >= 0) {
+            var ctx = focalCanvas.current.getContext('2d');
+            if (ctx) {
+                // draws the small white outer ring for contrast
+                ctx.beginPath();
+                ctx.arc(focalPointXref.current, focalPointYref.current, focalPointRadius + 1, 0, 2 * Math.PI, false);
+                ctx.strokeStyle = 'rgba(255,255,255,1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // draws the main see-through marker with (customizable) outline color
+                ctx.beginPath();
+                ctx.arc(focalPointXref.current, focalPointYref.current, focalPointRadius, 0, 2 * Math.PI, false);
+                ctx.strokeStyle = 'rgba(255,0,0,0.5)';
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+            }
         }
     }
 }
