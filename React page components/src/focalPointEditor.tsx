@@ -1,15 +1,13 @@
 import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
-import { CultureLoadOption } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/culture-load-option";
 import { ICultureInsensitiveProperty  } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/culture-insensitive-property";
-import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base";
-import { Entity, IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
+import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
-import { Box, Button, Container, CircularProgress, Icon, TableBody, TableCell, TableContainer, TableRow, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, ThemeProvider } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
-import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IMainFile, FocalPoint, IRendition, Rendition } from "./types";
+import { ContentHubPageProps, IContentHubContext, IMainFile } from "./types";
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
 
@@ -317,7 +315,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         if (isDragging) {
-
             // if clicked and started dragging, user is picking up focal point, not clicking to remove
             setRemove(false);
 
