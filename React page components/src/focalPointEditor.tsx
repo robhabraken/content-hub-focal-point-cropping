@@ -44,14 +44,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
     const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
 
-    const [firstPaint, setFirstPaint] = useState(false);
-    if (previewImage.current && previewImage.current.width > 0) {
-        if (!firstPaint) {
-            previewImageLoaded();
-            setFirstPaint(true);
-        }
-    }
-
     useEffect(() => {
         window.addEventListener('resize', resize);
 
@@ -103,7 +95,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             <Box marginBottom="16px">
                                                 <Box className="previewFrame">
                                                     <Box id="focalPointContainer" display="inline-block" position="relative">
-                                                        <img ref={previewImage} src={previewImageSrc} style={{ maxWidth: '100%' }} />
+                                                        <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
                                                         <canvas ref={focalCanvas} style={{
                                                             width: '100%',
                                                             height: '100%',
@@ -261,8 +253,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         setIsLocked(false);
     }
 
-    // TODO: ISSUE: on the first call (when the page is rendered and initialize is executed, previewImageLoaded doens't work because
-    // all the values are 0 that will be set by setState eventually...)
+    function onPreviewImageLoad(sender: any) {
+        previewImageLoaded();
+    }
 
     function previewImageLoaded() {
         if (!previewImage.current || !focalCanvas.current) {
