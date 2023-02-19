@@ -429,7 +429,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         setRemove(false);
 
         setFocalPoint(new FocalPoint());
-        saveFocalPoint();
         clear();
     }
 
