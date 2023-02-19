@@ -209,7 +209,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function edit() {
-        console.log("edit " + isLocked);
         if (isLocked) {
             unlock();
         } else {
@@ -219,7 +218,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function save() {
-        console.log("save");
         if (!isLocked) {
             saveFocalPoint();
             lock();
@@ -248,13 +246,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function lock() {
-        console.log("lock");
         setEditButtonText("Edit");
         setIsLocked(true);
     }
 
     function unlock() {
-        console.log("unlock");
         setEditButtonText("Cancel");
         setIsLocked(false);
     }
@@ -263,7 +259,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     // all the values are 0 that will be set by setState eventually...)
 
     function previewImageLoaded() {
-        console.log("previewImageLoaded");
         if (!previewImage.current || !focalCanvas.current) {
             return;
         }
@@ -298,7 +293,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseDown(sender: any) {
-        console.log("focalCanvasMouseDown");
         if (isLocked) {
             return;
         }
@@ -322,7 +316,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseMove(sender: any) {
-        console.log("focalCanvasMouseMove");
         if (isLocked) {
             return;
         }
@@ -340,7 +333,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseUp(sender: any) {
-        console.log("focalCanvasMouseUp");
         if (isLocked) {
             return;
         }
@@ -355,7 +347,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function focalCanvasMouseLeave(sender: any) {
-        console.log("focalCanvasMouseLeave");
         if (isLocked) {
             return;
         }
@@ -384,14 +375,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function beginSelection(x: number, y: number) {
-        console.log("beginSelection");
         focalPoint.x = x;
         focalPoint.y = y;
         setIsDragging(true);
     }
 
     function endSelection(sender: any) {
-        console.log("endSelection");
         setIsDragging(false);
 
         var x = getOffsetX(sender),
@@ -404,7 +393,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     async function saveFocalPoint() {
-        console.log("saveFocalPoint");
         var x = Math.ceil(focalPoint.x * ratio),
             y = Math.ceil(focalPoint.y * ratio);
 
@@ -433,8 +421,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function clear() {
-        console.log("clear");
-
         if (!focalCanvas.current) {
             return;
         }
@@ -446,7 +432,6 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     function draw() {
-        console.log("draw");
         clear();
 
         if (!focalCanvas.current) {
