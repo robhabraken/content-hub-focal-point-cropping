@@ -36,9 +36,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
     const [itemWidth, setItemWidth] = useState(0);
     const [itemHeight, setItemHeight] = useState(0);
-    const [focalPointX, setFocalPointX, focalPointXref] = useState(-1);
-    const [focalPointY, setFocalPointY, focalPointYref] = useState(-1);
-    const [ratio, setRatio] = useState(0.0);
+    const [focalPointX, setFocalPointX, focalPointXref] = useState(0);
+    const [focalPointY, setFocalPointY, focalPointYref] = useState(0);
+    const [ratio, setRatio, ratioRef] = useState(0.0);
 
     const [previewImageSrc, setPreviewImageSrc] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
@@ -270,7 +270,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         var previewWidth = previewImage.current.width;
-        var newRatio = itemWidth / previewWidth;
+        setRatio(itemWidth / previewWidth);
 
         clear();
 
@@ -281,9 +281,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         var focalPointYPropertyValue = focalPointYProperty ? focalPointYProperty.getValue() as number : 0;
 
         if (focalPointXPropertyValue && focalPointYPropertyValue != 0 && focalPointYPropertyValue && focalPointYPropertyValue != 0) {
-            setFocalPointX(focalPointXPropertyValue / newRatio);
-            setFocalPointY(focalPointYPropertyValue / newRatio);
-            setRatio(newRatio);
+            setFocalPointX(focalPointXPropertyValue / ratioRef.current);
+            setFocalPointY(focalPointYPropertyValue / ratioRef.current);
 
             draw();
         }
@@ -396,8 +395,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     }
 
     async function saveFocalPoint() {
-        var x = Math.ceil(focalPointX * ratio),
-            y = Math.ceil(focalPointY * ratio);
+        var x = Math.ceil(focalPointXref.current * ratioRef.current),
+            y = Math.ceil(focalPointYref.current * ratioRef.current);
 
         // keep focal point within bounding box of image dimensions in case of dragging cursor off canvas
         x = Math.max(Math.min(x, itemWidth), 0);
@@ -436,6 +435,8 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         if (!focalCanvas.current) {
             return;
         }
+
+        clear();
 
         if (focalPointXref.current >= 0 || focalPointYref.current >= 0) {
             var ctx = focalCanvas.current.getContext('2d');
