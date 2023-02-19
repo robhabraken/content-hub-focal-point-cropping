@@ -1,8 +1,4 @@
-# Content Hub - Focal point cropping v2.2
-
-_Please not that this version of the Focal Point Cropping extension is **NOT compatible with version 4.2.x**. I am still working on an update, since Content Hub is migrating its UI to React and the functionality currently being used in this module is no longer supported (in the same way it is implemented here)._
-
-
+# Content Hub - Focal point cropping v3.0
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
@@ -11,12 +7,14 @@ Change log:
 * v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio
 * v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets
 * v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component)
+* v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
 
 For more information, context and a video demo of the module and its configuration, check out:
 
 * [https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/](https://www.robhabraken.nl/index.php/4106/content-hub-focal-point-crop/)
 * [https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/](https://www.robhabraken.nl/index.php/4203/focal-point-crop-v1-1/)
 * [https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/](https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/)
+* *Blog post for version 3.0 pending*
 
 ## Configuration / Installation
 
@@ -53,7 +51,7 @@ Go to the Script editor by clicking `Edit` on the newly created Script entity an
 
 [Scripts/DAM - Create public links for croppings.cs](Scripts/DAM%20-%20Create%20public%20links%20for%20croppings.cs)
 
- into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` button and enable the Script by toggling the `Enable control` slide on.
+ into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` or back button (depending on your Content Hub version) and enable the Script by toggling the `Enable control` slide on.
 
 ### Actions
 
@@ -77,8 +75,7 @@ Create a new *Trigger* with the following properties:
   * Add Condition FocalPointX has changed
   * Add Condition FocalPointY has changed
   * Set operator to OR for these conditions
-  * Add another Condition one level up for MainFile has changed
-  * Set operator to OR for the top level conditions
+  * Add another Condition for MainFile has changed
 * Actions
   * Add action DAM - Create public links for croppings
 
@@ -107,7 +104,7 @@ Mind that maximum quality creates images that might be too big for web purposes.
 
 ### Media processing
 
-To allow for resizing and cropping of Vector images we need to generate a bitmap version (rendition) of the asset once it is uploaded. Go to *Media processing* and click on the `Content` section on your left. Then, click the `Edit` icon for the *Vectors* flow.
+To allow for resizing and cropping of Vector images we need to generate a bitmap version (rendition) of the asset once it is uploaded. Go to *Media processing* and click on the `Content` section on your left. Then, click the `Edit` icon or on the row of the *Vectors* flow (depending on your Content Hub version).
 
 Click on the large plus sign at the beginning of the flow to add a new task and select `Convert image`. Use the following parameters:
 
@@ -130,37 +127,11 @@ Click on the large plus sign at the beginning of the flow to add a new task and 
   * Required permissions: Read
   * Intended area of use: Download, Public links
 
-Click `Save task` on the bottom of the screen, than `Save` in the upper right corner. `Close` this flow to go back to the *Media processing* overview and click `Publish` to activate your changes. If you want to run this media processing flow for existing content you should also go to the *Assets* overview, select all applicable assets and click `Refresh conditions` under the fly out menu with the three little dots in the upper right corner. Newly uploaded assets will automatically be processed using this new configuration.
+Click `Save ` at the bottom of the popup, then `Save task` on the bottom of the screen, than `Save` in the upper right corner. `Close` this flow to go back to the *Media processing* overview and click `Publish` to activate your changes. If you want to run this media processing flow for existing content you should also go to the *Assets* overview, select all applicable assets and click `Refresh conditions` under the fly out menu with the three little dots in the upper right corner. Newly uploaded assets will automatically be processed using this new configuration.
 
 ### External page components
 
-Go to *Pages* and select the *Asset detail* page. Click on the plus sign on the bottom of Column 1 and search for *External*. Name your new component *"Focal point viewer"* and configure it as following:
-
-* Title: Focal point viewer
-* Visible: yes (toggle on)
-* Nested: no
-* container: Panel
-* Show panel title: yes (toggle on)
-* Collapsible: yes (toggle on)
-* Collapsed by default: yes (toggle on)
-
-Drag the item to the position below the original image viewer and click on the `Edit` option. Configure the properties as following:
-
-* Control name: Custom.Controls.FocalPointViewer
-* Code: [External page components/Focal point viewer.js](External%20page%20components/Focal%20point%20viewer.js)
-* Template: [External page components/Focal point viewer.html](External%20page%20components/Focal%20point%20viewer.html)
-
-`Save and close` the newly added component.
-
-Add another component by clicking the plus sign within a column to your likings, for example on the bottom of Column 1 and search for *External*. Name your new component "*Public links preview*" and toggle the component `Visible`. This also should be shown in a container, but not collapsed by default. Configure the properties as following:
-
-* Control name: Custom.Controls.PublicLinksPreview
-* Resources: https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js
-* Code: [External page components/Public links preview.js](External%20page%20components/Public%20links%20preview.js)
-  * Replace the contentHubBaseUrl https://{your-content-hub-url}/ with your instance URL
-* Template: [External page components/Public links preview.html](External%20page%20components/Public%20links%20preview.html)
-
-Save and close the newly added component and go to an asset to verify correct placement of both new components.
+Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder [External page components](External%20page%20components). If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder [React page components](React%20page%20components). Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
 
 #### Optional: Show focal point details
 
