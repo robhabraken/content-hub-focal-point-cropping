@@ -40,7 +40,7 @@ In order to install the Focal point editor, execute the following steps:
  10. Open `Settings`, set Container to `Panel` and toggle Show panel title `On`, as well as Collapsible and Collapsed by default
  11. Edit the component
  12. Change JS bundle to `From asset`
- 13. Click on the + sign below `From asset` and select `publicLinkViewer.js`
+ 13. Click on the + sign below `From asset` and select `focalPointEditor.js`
  14. Hit `Save`
 
 #### Known issues
