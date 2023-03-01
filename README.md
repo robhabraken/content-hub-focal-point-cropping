@@ -133,6 +133,12 @@ Click `Save ` at the bottom of the popup, then `Save task` on the bottom of the 
 
 Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder [External page components](External%20page%20components). If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder [React page components](React%20page%20components). Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
 
+### Configuring required crop/ratio public links
+* Edit the script installed in steps above: `DAM - Create public links for croppings`
+* Scroll down to teh section `configure auto-generated croppings` and add/remove CroppingDefintions
+* For information on how these work, see https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/
+
+
 #### Optional: Show focal point details
 
 This step isn't required as it isn't a functional part of the extension, but it does give some useful feedback on the focal point selection process if you like. Still on the *Asset detail* page of the *Pages* section, go to the Details component on the top of the second column (assuming a default Content Hub configuration). Toggle on the *Focal point* member group selection on the left side of the screen, select "White panel with shadow" as your Skin of choice and set both members on `Not editable`. After that you can `Save` the new *Details* component settings.
