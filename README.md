@@ -57,7 +57,7 @@ Go to the Script editor by clicking `Edit` on the newly created Script entity an
 The script installed in the previous step automatically generates a number of public links with various dimensions and ratios, also known as croppping definitions. These are added in the script via the function `AddCroppingDefinition`. This function has 5 parameters: the first two can be used to configure a public link with a specific fixed dimension (width x height); the next two parameters can be used to configure a desired ratio, where the script will crop the largest possible dimension of that ratio out of the original image (this method is preferred over the fixed pixel dimension, as you want to downscale using transformations anyway); and lastly, there is an optional boolean parameter that you can switch to true to omit any cropping and copy over the original image into the public link.
 
 The example script contains all three scenarios. It is advised to adjust this list to your needs:
-* Edit the script installed in previous step (`DAM - Create public links for croppings`)
+* Edit the script installed in previous step (*DAM - Create public links for croppings*)
 * Scroll down to the section `configure auto-generated croppings` and add or remove the desired CroppingDefinitions
 
 For information on how these work, see the blog posts mentioned above (especially version 1.1 and 2.0).
