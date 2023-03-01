@@ -53,6 +53,15 @@ Go to the Script editor by clicking `Edit` on the newly created Script entity an
 
  into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` or back button (depending on your Content Hub version) and enable the Script by toggling the `Enable control` slide on.
 
+ ### Configure desired public link croppings / ratios
+The script installed in the previous step automatically generates a number of public links with various dimensions and ratios, also known as croppping definitions. These are added in the script via the function `AddCroppingDefinition`. This function has 5 parameters: the first two can be used to configure a public link with a specific fixed dimension (width x height); the next two parameters can be used to configure a desired ratio, where the script will crop the largest possible dimension of that ratio out of the original image (this method is preferred over the fixed pixel dimension, as you want to downscale using transformations anyway); and lastly, there is an optional boolean parameter that you can switch to true to omit any cropping and copy over the original image into the public link.
+
+The example script contains all three scenarios. It is advised to adjust this list to your needs:
+* Edit the script installed in previous step (`DAM - Create public links for croppings`)
+* Scroll down to the section `configure auto-generated croppings` and add or remove the desired CroppingDefinitions
+
+For information on how these work, see the blog posts mentioned above (especially version 1.1 and 2.0).
+
 ### Actions
 
 Create a new *Action* with the following properties:
@@ -132,12 +141,6 @@ Click `Save ` at the bottom of the popup, then `Save task` on the bottom of the 
 ### External page components
 
 Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder [External page components](External%20page%20components). If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder [React page components](React%20page%20components). Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
-
-### Configuring required crop/ratio public links
-* Edit the script installed in steps above: `DAM - Create public links for croppings`
-* Scroll down to teh section `configure auto-generated croppings` and add/remove CroppingDefintions
-* For information on how these work, see https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/
-
 
 #### Optional: Show focal point details
 
