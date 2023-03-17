@@ -1,13 +1,14 @@
-# Content Hub - Focal point cropping v3.0
+# Content Hub - Focal point cropping v3.1
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
 Change log:
-* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point
-* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio
-* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets
-* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component)
+* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point.
+* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio.
+* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets.
+* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
 * v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
+* v3.1 adds the possibility of using custom names for your ratio based croppings.
 
 For more information, context and a video demo of the module and its configuration, check out:
 
@@ -54,9 +55,11 @@ Go to the Script editor by clicking `Edit` on the newly created Script entity an
  into the Script editor. `Save changes`, `Build` and `Publish` the code. Go back to the Scripts overview by clicking the `Close` or back button (depending on your Content Hub version) and enable the Script by toggling the `Enable control` slide on.
 
  ### Configure desired public link croppings / ratios
-The script installed in the previous step automatically generates a number of public links with various dimensions and ratios, also known as croppping definitions. These are added in the script via the function `AddCroppingDefinition`. This function has 5 parameters: the first two can be used to configure a public link with a specific fixed dimension (width x height); the next two parameters can be used to configure a desired ratio, where the script will crop the largest possible dimension of that ratio out of the original image (this method is preferred over the fixed pixel dimension, as you want to downscale using transformations anyway); and lastly, there is an optional boolean parameter that you can switch to true to omit any cropping and copy over the original image into the public link.
+The script installed in the previous step automatically generates a number of public links with various dimensions and ratios, also known as croppping definitions. These are added in the script via the function `AddCroppingDefinition`. This function has 6 parameters. The first parameter is a boolean that indicates if you want to crop the original. If you use the value 'false', the script will omit any cropping logic and copy over the original image into the public link. If you set this boolean to 'true', you can further configure the desired cropping details.
 
-The example script contains all three scenarios. It is advised to adjust this list to your needs:
+ The following two parameters can be used to configure a public link with a specific fixed dimension (width x height); the next two parameters can be used to configure a desired ratio, where the script will crop to the largest possible dimension of that ratio within the original image (this method is preferred over the fixed pixel dimension, as you want to downscale to a specific dimension using transformations anyway); and lastly, there is an optional string parameter that you can use to configure a name for a ratio, which will be used to name the public link and further reference that specific ratio.
+
+The example script contains all four scenarios. It is advised to adjust this list to your needs:
 * Edit the script installed in previous step (*DAM - Create public links for croppings*)
 * Scroll down to the section `configure auto-generated croppings` and add or remove the desired CroppingDefinitions
 
