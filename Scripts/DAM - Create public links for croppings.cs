@@ -158,7 +158,15 @@ AddCroppingDefinition(true, 0, 0, 1, 1, "square");
 
 void AddCroppingDefinition(bool cropOriginal, int width, int height, int ratioX, int ratioY, string ratioName = null)
 {
-    var croppingDefinition = new CroppingDefinition(title, !cropOriginal, width, height, ratioX, ratioY, ratioName);
+    // the default public link name and thus URL is using the asset Identifier as a base, which is unique and stable 
+    var croppingDefinition = new CroppingDefinition(asset.Identifier, !cropOriginal, width, height, ratioX, ratioY, ratioName);
+
+    // you could also opt for the asset ID, less verbose than the Identifier, though it would expose all of your assets (retrievable by iterating through the IDs)
+    //var croppingDefinition = new CroppingDefinition(assetId.ToString(), !cropOriginal, width, height, ratioX, ratioY, ratioName);
+    
+    // you could also opt for the asset title, generating a more human friendly URL, but it can change over time and is less reliable for persistant public link usage
+    //var croppingDefinition = new CroppingDefinition(title, !cropOriginal, width, height, ratioX, ratioY, ratioName);
+    
     croppings.Add(croppingDefinition.Name, croppingDefinition);
 }
 
