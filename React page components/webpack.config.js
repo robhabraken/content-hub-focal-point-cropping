@@ -1,4 +1,3 @@
-const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
 const path = require('path');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -64,7 +63,6 @@ module.exports = {
         //     defaultSizes: "parsed",
         //     analyzerMode: "static",
         // }),
-        new EsmWebpackPlugin(),
         new CompressionPlugin({
             algorithm: 'gzip',
         }),
