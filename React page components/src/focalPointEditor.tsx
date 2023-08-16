@@ -36,11 +36,13 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [itemHeight, setItemHeight] = useState(0);
     const [focalPointX, setFocalPointX, focalPointXref] = useState(0);
     const [focalPointY, setFocalPointY, focalPointYref] = useState(0);
+    const [focalPointModifiedBy, setFocalPointModifiedBy] = useState("");
     const [ratio, setRatio, ratioRef] = useState(0.0);
 
     const [previewImageSrc, setPreviewImageSrc] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
-    const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
+    const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>();
+    const [focalPointModifiedByProperty, setFocalPointModifiedByProperty] = useState<ICultureInsensitiveProperty>();
 
     useEffect(() => {
         window.addEventListener('resize', resize);
@@ -111,6 +113,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                                     </Box>
                                                 </Box>
                                             </Box>
+                                            { focalPointModifiedBy && <Box>
+                                                Focal point last modified by {focalPointModifiedBy}
+                                            </Box>}
                                             <Box display="flex" justifyContent="flex-end">
                                                 <Button variant="outlined" color="secondary" onClick={edit}>{editButtonText}</Button>
                                                 <Box sx={{ m: 1 }} />
@@ -159,6 +164,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         if (propertyFocalPointX && propertyFocalPointY) {
             setFocalPointXProperty(propertyFocalPointX);
             setFocalPointYProperty(propertyFocalPointY);
+        }
+
+        var propertyFocalPointModifiedBy = entity.getProperty<ICultureInsensitiveProperty>("FocalPointModifiedBy");
+        if (propertyFocalPointModifiedBy) {
+            setFocalPointModifiedByProperty(propertyFocalPointModifiedBy);
         }
         
         setPreviewImage(entityId);
@@ -276,6 +286,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setFocalPointY(focalPointYPropertyValue / ratioRef.current);
 
             draw();
+        }
+
+        var propertyFocalPointModifiedBy = entity.getProperty<ICultureInsensitiveProperty>("FocalPointModifiedBy");
+        if (propertyFocalPointModifiedBy) {
+            setFocalPointModifiedByProperty(propertyFocalPointModifiedBy);
         }
     }
 
@@ -395,6 +410,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // store the focal point coordinates on the asset
         focalPointXProperty?.setValue(x);
         focalPointYProperty?.setValue(y);
+
+        // store the username of the user that set this focal point
+        if (context.user) {
+            setFocalPointModifiedBy(context.user.userName);
+            focalPointModifiedByProperty?.setValue(context.user.userName);
+        }
 
         if (entity) {
             await context.client.entities.saveAsync(entity);
