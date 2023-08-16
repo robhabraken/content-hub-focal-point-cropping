@@ -296,12 +296,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
     function getOffsetX(sender: any) {
         var test = sender.currentTarget.getBoundingClientRect();
-        return Math.round(sender.pageX - window.pageXOffset - test.left)
+        return Math.round(sender.pageX - window.scrollX - test.left)
     }
 
     function getOffsetY(sender: any) {
         var test = sender.currentTarget.getBoundingClientRect();
-        return Math.round(sender.pageY - window.pageYOffset - test.top);
+        return Math.round(sender.pageY - window.scrollY - test.top);
     }
 
     function focalCanvasMouseDown(sender: any) {
