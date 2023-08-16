@@ -9,7 +9,10 @@ Change log:
 * v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
 * v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
 * v3.1 adds the possibility of using custom names for your ratio based croppings.
-* v3.2 adds a member in the focal point group of the asset schema to store the username of the user who set this focal point. Has updated Window properties (replacing deprecated aliases).
+* v3.2 has the following changes:
+  - A member has been added in the focal point group of the asset schema to store the username of the user who set this focal point
+  - Updated Window properties (replacing deprecated aliases)
+  - The old style External page component versions for Content Hub 4.1 and below have been removed from the repository, as Content Hub is now on auto-update
 
 For more information, context and a video demo of the module and its configuration, check out:
 
