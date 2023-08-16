@@ -288,9 +288,9 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             draw();
         }
 
-        var propertyFocalPointModifiedBy = entity.getProperty<ICultureInsensitiveProperty>("FocalPointModifiedBy");
-        if (propertyFocalPointModifiedBy) {
-            setFocalPointModifiedByProperty(propertyFocalPointModifiedBy);
+        var focalPointModifiedByPropertyValue = focalPointModifiedByProperty ? focalPointModifiedByProperty.getValue() as string : "";
+        if (focalPointModifiedByPropertyValue) {
+            setFocalPointModifiedBy(focalPointModifiedByPropertyValue);
         }
     }
 
