@@ -5,7 +5,7 @@ import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/d
 import React, { useEffect, useRef } from "react";
 import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
-import { Box, Button, CircularProgress, ThemeProvider } from "@mui/material";
+import { Box, Button, CircularProgress, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
 import { ContentHubPageProps, IContentHubContext, IMainFile } from "./types";
 
@@ -92,7 +92,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             }} />
                                         </Box>}
                                         { showFocalPointViewer && <Box id="focalPointViewer">
-                                            <Box marginBottom="16px">
+                                            <Box>
                                                 <Box className="previewFrame">
                                                     <Box id="focalPointContainer" display="inline-block" position="relative">
                                                         <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
@@ -114,9 +114,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                                 </Box>
                                             </Box>
                                             { focalPointModifiedBy && <Box>
-                                                Focal point last modified by {focalPointModifiedBy}
+                                                <Typography variant="body2" color={"rgba(0, 0, 0, 0.54)"}>
+                                                    Focal point last modified by {focalPointModifiedBy}
+                                                </Typography>
                                             </Box>}
-                                            <Box display="flex" justifyContent="flex-end">
+                                            <Box display="flex" justifyContent="flex-end" marginTop="16px">
                                                 <Button variant="outlined" color="secondary" onClick={edit}>{editButtonText}</Button>
                                                 <Box sx={{ m: 1 }} />
                                                 <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
