@@ -13,7 +13,7 @@ Change log:
   - A member has been added in the focal point group of the asset schema to store the username of the user who set this focal point
   - Updated Window properties (replacing deprecated aliases)
   - The old style External page component versions for Content Hub 4.1 and below have been removed from the repository, as Content Hub is now on auto-update
-  - Major version bump of all dependencies (multiple patches, minor and major dependencies)
+  - Major version bump of all npm dependencies (multiple patches, minor and major dependencies)
   - Refactor of webpack config to comply with Webpack 5, also simplifying it by removing unused features and dependencies
 
 For more information, context and a video demo of the module and its configuration, check out:
