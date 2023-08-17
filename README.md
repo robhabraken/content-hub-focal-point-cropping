@@ -9,6 +9,7 @@ Change log:
   - The old style External page component versions for Content Hub 4.1 and below have been removed from the repository, as Content Hub is now on auto-update
   - Major version bump of all npm dependencies (multiple patches, minor and major dependencies)
   - Refactor of webpack config to comply with Webpack 5, also simplifying it by removing unused features and dependencies
+  - Upgraded compatibility from Node.js 16.20.2 (LTS Gallium) to 18.17.1 (LTS Hydrogen)
 * v3.1 adds the possibility of using custom names for your ratio based croppings.
 * v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
 * v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
