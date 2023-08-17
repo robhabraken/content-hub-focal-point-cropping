@@ -1,38 +1,15 @@
-const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
 const path = require('path');
-const CompressionPlugin = require('compression-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
     entry: {
         publicLinkViewer: './src/publicLinkApp.tsx',
         focalPointEditor: './src/focalPointApp.tsx'
     },
-    node: {
-        fs: 'empty'
-    },
-    devtool: 'source-map',
+    target: ["web", "es2020"],
     module: {
         rules: [
-            {
-                test: /\.css$/,
-                use: [
-                    "style-loader",
-                    {
-                        loader: "css-loader",
-                        options: {
-                            importLoaders: 1,
-                            modules: true,
-                        },
-                    },
-                ],
-                include: /\.module\.css$/,
-            },
-            {
-                test: /\.css$/,
-                use: ["style-loader", "css-loader"],
-                exclude: /\.module\.css$/,
-            },
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
@@ -42,31 +19,27 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        fallback: {
+            fs: false,
+            https: false,
+        },        
     },
+    devtool: "source-map",
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
-        library: "EXTERNAL",
-        libraryTarget: "var"
-    },
-    externals: [
-        {
-            // "react": "React16",
-            // "react-dom": "ReactDOM16",
-            // "@material-ui/core": "MaterialUiCore4",
-            // TODO: sc-contenthub-webclient-sdk needs a single point of import for sharing this dependency to work
-            // "@sitecore/sc-contenthub-webclient-sdk/dist/authentication/oauth-password-grant": "ScChWcSdkOAuth",
-            // "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client": "ScChWcSdkChClient"
+        library: {
+            type: "module",
         },
-    ],
+    },
+    experiments: { outputModule: true, backCompat: false },
+    optimization: {
+        minimize: true,
+    },
     plugins: [
-        // new BundleAnalyzerPlugin({
-        //     defaultSizes: "parsed",
-        //     analyzerMode: "static",
-        // }),
-        new EsmWebpackPlugin(),
-        new CompressionPlugin({
-            algorithm: 'gzip',
+        new NodePolyfillPlugin(),
+        new webpack.ProvidePlugin({
+            process: "process/browser",
         }),
     ]
 };

@@ -1,14 +1,24 @@
-# Content Hub - Focal point cropping v3.1
+# Content Hub - Focal point cropping v3.2
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
 Change log:
-* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point.
-* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio.
-* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets.
-* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
-* v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
+* v3.2 has the following changes:
+  - A member has been added in the focal point group of the asset schema to store the username of the user who set this focal point
+  - Updated Window properties (replacing deprecated aliases)
+  - The old style External page component versions for Content Hub 4.1 and below have been removed from the repository, as Content Hub is now on auto-update
+  - Major version bump of all npm dependencies (multiple patches, minor and major dependencies)
+  - Refactor of webpack config to comply with Webpack 5, also simplifying it by removing unused features and dependencies
+  - Upgraded compatibility from Node.js 16.20.2 (LTS Gallium) to 18.17.1 (LTS Hydrogen)
+  - Upgraded to MUI v5 including minor refactor of Material UI hierarchy and styling configuration
+  - Bumped from React 17 to React 18.2
+  - Solved all pending vulnerability warnings due to outstanding dependency bumps
 * v3.1 adds the possibility of using custom names for your ratio based croppings.
+* v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
+* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
+* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets.
+* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio.
+* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point.
 
 For more information, context and a video demo of the module and its configuration, check out:
 
@@ -35,12 +45,17 @@ Add a `New member`, `select` the member type *property* and from the dropdown se
 * Label: Focal point X-axis coordinate
 * You can leave the rest of the properties default
 
-And another member following the same procedure with the properties:
+And another integer member following the same procedure with the properties:
 
 * Name: FocalPointY
 * Label: Focal point Y-axis coordinate
 
-Click `Publish` or `Apply changes` (depending on your Content Hub version) to publish the new schema for your assets.
+Add a `New member`, `select` the member type *property* and from the dropdown select the `String` *data type* with the properties:
+
+* Name: FocalPointModifiedBy
+* Label: Focal point set by
+
+Click `Apply changes` to publish the new schema for your assets.
 
 ### Scripts
 
@@ -146,8 +161,8 @@ Click `Save ` at the bottom of the popup, then `Save task` on the bottom of the 
 
 ### External page components
 
-Install the external page components that match your Content Hub version: versions up to 4.1.x typically use the HTML and JavaScript components, included in the folder [External page components](External%20page%20components). If you are running on Content Hub 4.2.x and up, you should use the React components included in the folder [React page components](React%20page%20components). Both folders have their own readme file with instructions on how to install them. Please note that even if you run 4.2.x in compatibility mode and / or disabled React in the Content Hub Settings, the HTML components do not function as intended; they are not suitable to be run in compatible or hybrid React mode.
+Install the external page components. You can find them over here: [React page components](React%20page%20components). This folder also contains a readme file with instructions on how to install these components.
 
 #### Optional: Show focal point details
 
-This step isn't required as it isn't a functional part of the extension, but it does give some useful feedback on the focal point selection process if you like. Still on the *Asset detail* page of the *Pages* section, go to the Details component on the top of the second column (assuming a default Content Hub configuration). Toggle on the *Focal point* member group selection on the left side of the screen, select "White panel with shadow" as your Skin of choice and set both members on `Not editable`. After that you can `Save` the new *Details* component settings.
+This step isn't required as it isn't a functional part of the extension, but it does give some useful feedback on the focal point selection process if you like. Still on the *Asset detail* page of the *Pages* section, go to the Details component on the top of the second column (assuming a default Content Hub configuration). Toggle on the *Focal point* member group selection on the left side of the screen, select "White panel with shadow" as your Skin of choice and set all members on `Not editable`. After that you can `Save` the new *Details* component settings.

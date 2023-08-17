@@ -38,45 +38,43 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
     }
 
     return (
-        <ErrorBoundary>
-            <OptionsContext.Provider value={context.options}>
-                <OptionsContext.Consumer>
-                    {
-                        (options) => {
-                            if (!isLoaded) {
-                                return (
-                                    <>
+        <ThemeProvider theme={context.theme}>
+            <ErrorBoundary>
+                <OptionsContext.Provider value={context.options}>
+                    <OptionsContext.Consumer>
+                        {
+                            (options) => {
+                                if (!isLoaded) {
+                                    return (
                                         <CircularProgress />
-                                    </>
-                                );
-                            }
+                                    );
+                                }
 
-                            return (
-                                <>
-                                    <ThemeProvider theme={context.theme}>
+                                return (
+                                    <Box>
                                         <Typography variant="caption">
                                             {publicLinkQueryResult?.length} items <Button aria-label="Refresh" data-tip="Refresh" data-for="toolTipComponent" data-place="top" variant="text" color="inherit" size="small" startIcon={<RefreshIcon />} onClick={refresh} />
                                         </Typography>
-                                    </ThemeProvider>
 
-                                    <TableContainer>
-                                        <Table>
-                                            <TableBody>
-                                                {
-                                                    publicLinkQueryResult?.map((entity, index) =>
-                                                        renderPublicLink(entity, index, renditions)
-                                                    )
-                                                }
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </>
-                            );
+                                        <TableContainer>
+                                            <Table>
+                                                <TableBody>
+                                                    {
+                                                        publicLinkQueryResult?.map((entity, index) =>
+                                                            renderPublicLink(entity, index, renditions)
+                                                        )
+                                                    }
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                );
+                            }
                         }
-                    }
-                </OptionsContext.Consumer>
-            </OptionsContext.Provider>
-        </ErrorBoundary>
+                    </OptionsContext.Consumer>
+                </OptionsContext.Provider>
+            </ErrorBoundary>
+        </ThemeProvider>
     )
 
     async function loadPublicLinks(client: IContentHubClient, entityId: number) {
@@ -129,23 +127,19 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
 
         return (
             <TableRow key={"row_" + index} hover={true}>
-                <TableCell size="small" align="center">
+                <TableCell size="small" align="center" style={{ borderBottomColor: 'rgb(224, 224, 224)' }}>
                     <a href={entityUrl} target="_blank">
                         <img src={entityUrl + "&t=thumbnail"} alt="Image preview" />
                     </a>
                 </TableCell>
-                <TableCell valign="top">
-                    <ThemeProvider theme={context.theme}>
-                        <Typography variant="body1">
-                            {title}
-                        </Typography>
-                    </ThemeProvider>
+                <TableCell valign="top" style={{ borderBottomColor: 'rgb(224, 224, 224)' }}>
+                    <Typography variant="body1">
+                        {title}
+                    </Typography>
                     <Box>
-                        <ThemeProvider theme={context.theme}>
-                            <Typography variant="body2" color={"rgba(0, 0, 0, 0.54)"}>
-                                {rendition.label} · {croppingType} · {width} x {height} px
-                            </Typography>
-                        </ThemeProvider>
+                        <Typography variant="body2" color={"rgba(0, 0, 0, 0.54)"}>
+                            {rendition.label} · {croppingType} · {width} x {height} px
+                        </Typography>
                     </Box>
                 </TableCell>
             </TableRow>

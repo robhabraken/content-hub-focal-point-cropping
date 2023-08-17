@@ -15,6 +15,7 @@ export interface IContentHubContext {
     client: IContentHubClient;
     entity: any;
     theme: any;
+    user: any;
 }
 
 export interface IRendition {

@@ -5,7 +5,7 @@ import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/d
 import React, { useEffect, useRef } from "react";
 import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
-import { Box, Button, CircularProgress, ThemeProvider } from "@mui/material";
+import { Box, Button, CircularProgress, ThemeProvider, Typography } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
 import { ContentHubPageProps, IContentHubContext, IMainFile } from "./types";
 
@@ -36,11 +36,13 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     const [itemHeight, setItemHeight] = useState(0);
     const [focalPointX, setFocalPointX, focalPointXref] = useState(0);
     const [focalPointY, setFocalPointY, focalPointYref] = useState(0);
+    const [focalPointModifiedBy, setFocalPointModifiedBy] = useState("");
     const [ratio, setRatio, ratioRef] = useState(0.0);
 
     const [previewImageSrc, setPreviewImageSrc] = useState("");
     const [focalPointXProperty, setFocalPointXProperty] = useState<ICultureInsensitiveProperty>(); 
-    const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>(); 
+    const [focalPointYProperty, setFocalPointYProperty] = useState<ICultureInsensitiveProperty>();
+    const [focalPointModifiedByProperty, setFocalPointModifiedByProperty] = useState<ICultureInsensitiveProperty>();
 
     useEffect(() => {
         window.addEventListener('resize', resize);
@@ -63,22 +65,20 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     });
 
     return (
-        <ErrorBoundary>
-            <OptionsContext.Provider value={context.options}>
-                <OptionsContext.Consumer>
-                    {
-                        (options) => {
-                            if (!isLoaded) {
-                                return (
-                                    <>
+        <ThemeProvider theme={context.theme}>
+            <ErrorBoundary>
+                <OptionsContext.Provider value={context.options}>
+                    <OptionsContext.Consumer>
+                        {
+                            (options) => {
+                                if (!isLoaded) {
+                                    return (
                                         <CircularProgress />
-                                    </>
-                                );
-                            }
+                                    );
+                                }
 
-                            return (
-                                <>
-                                    <ThemeProvider theme={context.theme}>
+                                return (
+                                    <Box>
                                         { showPlaceHolder && <Box id="imagePlaceholder" display="flex" justifyContent="center">
                                             <PhotoIcon style={{
                                                 fontSize: 160,
@@ -90,41 +90,44 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             }} />
                                         </Box>}
                                         { showFocalPointViewer && <Box id="focalPointViewer">
-                                            <Box marginBottom="16px">
-                                                <Box className="previewFrame">
-                                                    <Box id="focalPointContainer" display="inline-block" position="relative">
-                                                        <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
-                                                        <canvas ref={focalCanvas} style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            zIndex: 20,
-                                                            userSelect: 'none'
-                                                        }}
-                                                            onMouseDown={focalCanvasMouseDown}
-                                                            onMouseMove={focalCanvasMouseMove}
-                                                            onMouseUp={focalCanvasMouseUp}
-                                                            onMouseLeave={focalCanvasMouseLeave}
-                                                        ></canvas>
-                                                    </Box>
+                                            <Box className="previewFrame">
+                                                <Box id="focalPointContainer" display="inline-block" position="relative">
+                                                    <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
+                                                    <canvas ref={focalCanvas} style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        zIndex: 20,
+                                                        userSelect: 'none'
+                                                    }}
+                                                        onMouseDown={focalCanvasMouseDown}
+                                                        onMouseMove={focalCanvasMouseMove}
+                                                        onMouseUp={focalCanvasMouseUp}
+                                                        onMouseLeave={focalCanvasMouseLeave}
+                                                    ></canvas>
                                                 </Box>
                                             </Box>
-                                            <Box display="flex" justifyContent="flex-end">
+                                            { focalPointModifiedBy && <Box>
+                                                <Typography variant="body2" color={"rgba(0, 0, 0, 0.54)"}>
+                                                    Focal point last modified by {focalPointModifiedBy}
+                                                </Typography>
+                                            </Box>}
+                                            <Box display="flex" justifyContent="flex-end" marginTop="16px">
                                                 <Button variant="outlined" color="secondary" onClick={edit}>{editButtonText}</Button>
                                                 <Box sx={{ m: 1 }} />
                                                 <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
                                             </Box>
                                         </Box>}
-                                    </ThemeProvider>
-                                </>
-                            );
+                                    </Box>
+                                );
+                            }
                         }
-                    }
-                </OptionsContext.Consumer>
-            </OptionsContext.Provider>
-        </ErrorBoundary>
+                    </OptionsContext.Consumer>
+                </OptionsContext.Provider>
+            </ErrorBoundary>
+        </ThemeProvider>
     )
 
     async function initialize(client: IContentHubClient, entityId: number) {
@@ -159,6 +162,11 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         if (propertyFocalPointX && propertyFocalPointY) {
             setFocalPointXProperty(propertyFocalPointX);
             setFocalPointYProperty(propertyFocalPointY);
+        }
+
+        var propertyFocalPointModifiedBy = entity.getProperty<ICultureInsensitiveProperty>("FocalPointModifiedBy");
+        if (propertyFocalPointModifiedBy) {
+            setFocalPointModifiedByProperty(propertyFocalPointModifiedBy);
         }
         
         setPreviewImage(entityId);
@@ -277,16 +285,21 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
 
             draw();
         }
+
+        var focalPointModifiedByPropertyValue = focalPointModifiedByProperty ? focalPointModifiedByProperty.getValue() as string : "";
+        if (focalPointModifiedByPropertyValue) {
+            setFocalPointModifiedBy(focalPointModifiedByPropertyValue);
+        }
     }
 
     function getOffsetX(sender: any) {
         var test = sender.currentTarget.getBoundingClientRect();
-        return Math.round(sender.pageX - window.pageXOffset - test.left)
+        return Math.round(sender.pageX - window.scrollX - test.left)
     }
 
     function getOffsetY(sender: any) {
         var test = sender.currentTarget.getBoundingClientRect();
-        return Math.round(sender.pageY - window.pageYOffset - test.top);
+        return Math.round(sender.pageY - window.scrollY - test.top);
     }
 
     function focalCanvasMouseDown(sender: any) {
@@ -395,6 +408,12 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         // store the focal point coordinates on the asset
         focalPointXProperty?.setValue(x);
         focalPointYProperty?.setValue(y);
+
+        // store the username of the user that set this focal point
+        if (context.user) {
+            setFocalPointModifiedBy(context.user.userName);
+            focalPointModifiedByProperty?.setValue(context.user.userName);
+        }
 
         if (entity) {
             await context.client.entities.saveAsync(entity);
