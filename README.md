@@ -51,7 +51,7 @@ Add a `New member`, `select` the member type *property* and from the dropdown se
 * Name: FocalPointModifiedBy
 * Label: Focal point set by
 
-Click `Publish` or `Apply changes` (depending on your Content Hub version) to publish the new schema for your assets.
+Click `Apply changes` to publish the new schema for your assets.
 
 ### Scripts
 
