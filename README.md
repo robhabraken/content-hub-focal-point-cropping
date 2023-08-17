@@ -3,18 +3,18 @@
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
 Change log:
-* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point.
-* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio.
-* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets.
-* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
-* v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
-* v3.1 adds the possibility of using custom names for your ratio based croppings.
 * v3.2 has the following changes:
   - A member has been added in the focal point group of the asset schema to store the username of the user who set this focal point
   - Updated Window properties (replacing deprecated aliases)
   - The old style External page component versions for Content Hub 4.1 and below have been removed from the repository, as Content Hub is now on auto-update
   - Major version bump of all npm dependencies (multiple patches, minor and major dependencies)
   - Refactor of webpack config to comply with Webpack 5, also simplifying it by removing unused features and dependencies
+* v3.1 adds the possibility of using custom names for your ratio based croppings.
+* v3.0 includes a completely new set of page components ported to React to use in version 4.2.x and up. Also, these components are now styled using Material UI instead of hard-coded CSS copied from the Content Hub UI itself, and use the Content Hub JavaScript SDK for reading and updating entity properties.
+* v2.2 introduces a fixed sorting order of displaying public links in the preview (external page component).
+* v2.1 dropped the trigger to listen to changed renditions, as it causes performance issues and race conditions when regenerating a large amount of assets.
+* v2.0 introduces scaling based on ratio rather than image size, to limit the amount of required dimensions, keeping the scaled public link image as large as possible at the same time; also, it now is possible to omit resizing or cropping to be able to add public links using the original size and ratio.
+* v1.1 now supports videos and documents too, utilizes a better integration of the focal point selector, and has an edit state to limit regeneration of public links and prevent accidental changes to the focal point.
 
 For more information, context and a video demo of the module and its configuration, check out:
 
