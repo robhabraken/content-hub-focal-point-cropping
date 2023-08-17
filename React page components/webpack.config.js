@@ -34,7 +34,7 @@ module.exports = {
     },
     experiments: { outputModule: true, backCompat: false },
     optimization: {
-        minimize: false,
+        minimize: true,
     },
     plugins: [
         new NodePolyfillPlugin(),
