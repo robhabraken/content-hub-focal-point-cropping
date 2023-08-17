@@ -65,22 +65,20 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
     });
 
     return (
-        <ErrorBoundary>
-            <OptionsContext.Provider value={context.options}>
-                <OptionsContext.Consumer>
-                    {
-                        (options) => {
-                            if (!isLoaded) {
-                                return (
-                                    <>
+        <ThemeProvider theme={context.theme}>
+            <ErrorBoundary>
+                <OptionsContext.Provider value={context.options}>
+                    <OptionsContext.Consumer>
+                        {
+                            (options) => {
+                                if (!isLoaded) {
+                                    return (
                                         <CircularProgress />
-                                    </>
-                                );
-                            }
+                                    );
+                                }
 
-                            return (
-                                <>
-                                    <ThemeProvider theme={context.theme}>
+                                return (
+                                    <Box>
                                         { showPlaceHolder && <Box id="imagePlaceholder" display="flex" justifyContent="center">
                                             <PhotoIcon style={{
                                                 fontSize: 160,
@@ -92,25 +90,23 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                             }} />
                                         </Box>}
                                         { showFocalPointViewer && <Box id="focalPointViewer">
-                                            <Box>
-                                                <Box className="previewFrame">
-                                                    <Box id="focalPointContainer" display="inline-block" position="relative">
-                                                        <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
-                                                        <canvas ref={focalCanvas} style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            zIndex: 20,
-                                                            userSelect: 'none'
-                                                        }}
-                                                            onMouseDown={focalCanvasMouseDown}
-                                                            onMouseMove={focalCanvasMouseMove}
-                                                            onMouseUp={focalCanvasMouseUp}
-                                                            onMouseLeave={focalCanvasMouseLeave}
-                                                        ></canvas>
-                                                    </Box>
+                                            <Box className="previewFrame">
+                                                <Box id="focalPointContainer" display="inline-block" position="relative">
+                                                    <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
+                                                    <canvas ref={focalCanvas} style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        zIndex: 20,
+                                                        userSelect: 'none'
+                                                    }}
+                                                        onMouseDown={focalCanvasMouseDown}
+                                                        onMouseMove={focalCanvasMouseMove}
+                                                        onMouseUp={focalCanvasMouseUp}
+                                                        onMouseLeave={focalCanvasMouseLeave}
+                                                    ></canvas>
                                                 </Box>
                                             </Box>
                                             { focalPointModifiedBy && <Box>
@@ -124,14 +120,14 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
                                                 <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
                                             </Box>
                                         </Box>}
-                                    </ThemeProvider>
-                                </>
-                            );
+                                    </Box>
+                                );
+                            }
                         }
-                    }
-                </OptionsContext.Consumer>
-            </OptionsContext.Provider>
-        </ErrorBoundary>
+                    </OptionsContext.Consumer>
+                </OptionsContext.Provider>
+            </ErrorBoundary>
+        </ThemeProvider>
     )
 
     async function initialize(client: IContentHubClient, entityId: number) {
