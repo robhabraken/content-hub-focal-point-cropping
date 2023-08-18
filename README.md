@@ -27,6 +27,7 @@ For more information, context and a video demo of the module and its configurati
 * [https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/](https://www.robhabraken.nl/index.php/4255/focal-point-crop-2-0/)
 * [https://www.robhabraken.nl/index.php/4575/focal-point-crop-3-0/](https://www.robhabraken.nl/index.php/4575/focal-point-crop-3-0/)
 * [https://www.robhabraken.nl/index.php/4623/naming-public-links-for-cropping-ratios/](https://www.robhabraken.nl/index.php/4623/naming-public-links-for-cropping-ratios/)
+* [https://www.robhabraken.nl/index.php/4755/focal-point-cropping-v3-2/](https://www.robhabraken.nl/index.php/4755/focal-point-cropping-v3-2/)
 
 ## Configuration / Installation
 
