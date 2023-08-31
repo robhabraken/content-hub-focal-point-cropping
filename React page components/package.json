@@ -11,8 +11,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.3",
-    "@mui/material": "^5.14.5",
+    "@mui/icons-material": "^5.14.7",
+    "@mui/material": "^5.14.7",
     "@sitecore/sc-contenthub-webclient-sdk": "^1.2.8",
     "@types/color": "^3.0.3",
     "color": "^4.2.3",
@@ -23,12 +23,12 @@
     "webpack": "^5.88.2"
   },
   "devDependencies": {
-    "@types/react": "^18.2.20",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "eslint-plugin-react-hooks": "^4.6.0",
     "http-server": "^14.1.1",
     "ts-loader": "^9.4.4",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "webpack-cli": "^5.1.4"
   }
 }
