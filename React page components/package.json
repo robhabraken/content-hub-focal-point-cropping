@@ -11,10 +11,10 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.7",
-    "@mui/material": "^5.14.7",
+    "@mui/icons-material": "^5.14.8",
+    "@mui/material": "^5.14.8",
     "@sitecore/sc-contenthub-webclient-sdk": "^1.2.8",
-    "@types/color": "^3.0.3",
+    "@types/color": "^3.0.4",
     "color": "^4.2.3",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "react": "^18.2.0",
