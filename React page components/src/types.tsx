@@ -11,6 +11,7 @@ export class ContentHubPageProps implements IContentHubPageProps {
 }
 
 export interface IContentHubContext {
+    config: any;
     options: IContentHubPageProps;
     client: IContentHubClient;
     entity: any;

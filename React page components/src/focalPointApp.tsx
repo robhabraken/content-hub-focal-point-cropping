@@ -4,6 +4,7 @@ import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/cl
 import { FocalPointEditor } from "./focalPointEditor";
 
 interface IContentHubContext {
+    config: any;
     options: IContentHubPageProps;
     client: IContentHubClient;
     entity: any;

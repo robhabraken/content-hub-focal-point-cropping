@@ -4,6 +4,7 @@ import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/cl
 import { PublicLinkViewer } from "./publicLinkViewer";
 
 interface IContentHubContext {
+    config: any;
     options: IContentHubPageProps;
     client: IContentHubClient;
     entity: any;
