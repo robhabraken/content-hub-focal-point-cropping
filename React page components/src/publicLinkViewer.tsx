@@ -1,4 +1,5 @@
 import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
+import { IExtendedContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/extended-client";
 import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base";
 import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
@@ -11,7 +12,7 @@ import { ContentHubPageProps, ConversionConfiguration, IContentHubContext, IRend
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
 
-export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) => {
+export const PublicLinkViewer = ({ context, client }: { context: IContentHubContext, client: IExtendedContentHubClient }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [publicLinkQueryResult, setPublicLinkQueryResult] = useState<IEntity[]>();
@@ -22,7 +23,7 @@ export const PublicLinkViewer = ({ context }: { context: IContentHubContext }) =
             setIsLoading(true);
 
             console.log("Loading public links");
-            loadPublicLinks(context.client, context.options.entityId)
+            loadPublicLinks(client, context.options.entityId)
                 .then(publicLinks => {
                     console.log("Public links loaded")
                     setPublicLinkQueryResult(publicLinks);
