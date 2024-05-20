@@ -1,5 +1,5 @@
-import ReactDOM from "react-dom";
 import React from "react";
+import { createRoot } from "react-dom/client";
 import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
 import { PublicLinkViewer } from "./publicLinkViewer";
 
@@ -18,16 +18,13 @@ interface IContentHubPageProps {
 }
 
 export default function createExternalRoot(container: HTMLElement) {
+    const root = createRoot(container);
     return {
         render(context: IContentHubContext) {
-            ReactDOM.render(
-                <PublicLinkViewer context={context} />
-                ,
-                container
-            );
+            root.render(<PublicLinkViewer context={context} />);
         },
         unmount() {
-            ReactDOM.unmountComponentAtNode(container);
+            root.unmount();
         }
     }
 };
