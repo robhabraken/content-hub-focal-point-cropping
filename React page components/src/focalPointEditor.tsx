@@ -1,4 +1,5 @@
 import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
+import { IExtendedContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/extended-client";
 import { ICultureInsensitiveProperty  } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/culture-insensitive-property";
 import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
 import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
@@ -11,7 +12,7 @@ import { ContentHubPageProps, IContentHubContext, IMainFile } from "./types";
 
 const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPageProps);
 
-export const FocalPointEditor = ({ context }: { context: IContentHubContext }) => {
+export const FocalPointEditor = ({ context, client }: { context: IContentHubContext, client: IExtendedContentHubClient }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -51,7 +52,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
             setIsLoading(true);
 
             console.log("Loading focal point editor");
-            initialize(context.client, context.options.entityId)
+            initialize(client, context.options.entityId)
                .then(entity => {
                     console.log("Focal point editor loaded");
                     setEntity(entity);
@@ -416,7 +417,7 @@ export const FocalPointEditor = ({ context }: { context: IContentHubContext }) =
         }
 
         if (entity) {
-            await context.client.entities.saveAsync(entity);
+            await client.entities.saveAsync(entity);
         }
     }
 

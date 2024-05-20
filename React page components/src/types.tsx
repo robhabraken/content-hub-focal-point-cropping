@@ -1,5 +1,3 @@
-import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
-
 export interface IContentHubPageProps {
     entityId: number;
     culture: string;
@@ -13,7 +11,6 @@ export class ContentHubPageProps implements IContentHubPageProps {
 export interface IContentHubContext {
     config: any;
     options: IContentHubPageProps;
-    client: IContentHubClient;
     entity: any;
     theme: any;
     user: any;
