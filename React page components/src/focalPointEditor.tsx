@@ -26,6 +26,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
 
     const [editButtonText, setEditButtonText] = useState("Edit");
 
+    const [isEditable, setIsEditable] = useState(false);
     const [isLocked, setIsLocked] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
@@ -116,7 +117,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
                                                 </Typography>
                                             </Box>}
                                             <Box display="flex" justifyContent="flex-end" marginTop="16px">
-                                                <Button variant="outlined" color="secondary" onClick={edit}>{editButtonText}</Button>
+                                                <Button variant="outlined" color="secondary" disabled={!isEditable} onClick={edit}>{editButtonText}</Button>
                                                 <Box sx={{ m: 1 }} />
                                                 <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
                                             </Box>
@@ -137,6 +138,12 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
         if (entity == null) {
             console.log("Loading asset failed");
             return;
+        }
+        
+        // retrieve update permissions on current entity for current user
+        const permissions = await client.permissions.getPermissionsAsync(entityId);
+        if (permissions?.includes("Update")) {
+            setIsEditable(true);
         }
 
         // MainFile not (yet) available (image may still be in media processing), display placeholder
