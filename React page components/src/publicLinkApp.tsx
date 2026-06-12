@@ -1,7 +1,10 @@
+import { 
+    ContentHubClient, 
+    IExtendedContentHubClient 
+} from "@sitecore/sc-contenthub-webclient-sdk";
+
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { ContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
-import { IExtendedContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/extended-client";
 import { PublicLinkViewer } from "./publicLinkViewer";
 
 interface IContentHubContext {

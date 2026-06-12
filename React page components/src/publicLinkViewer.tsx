@@ -1,8 +1,11 @@
-import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
-import { IExtendedContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/extended-client";
-import { RelationRole } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base";
-import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
-import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
+import { 
+    IContentHubClient, 
+    IExtendedContentHubClient, 
+    RelationRole, 
+    IEntity, 
+    EntityLoadConfiguration 
+} from "@sitecore/sc-contenthub-webclient-sdk";
+
 import React, { useEffect, useState } from "react";
 import ErrorBoundary from "./errorBoundary";
 import Table from '@mui/material/Table';

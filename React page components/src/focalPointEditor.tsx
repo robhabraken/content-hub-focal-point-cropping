@@ -1,8 +1,11 @@
-import { IContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/content-hub-client";
-import { IExtendedContentHubClient } from "@sitecore/sc-contenthub-webclient-sdk/dist/clients/extended-client";
-import { ICultureInsensitiveProperty  } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/culture-insensitive-property";
-import { IEntity } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/base/entity";
-import { EntityLoadConfiguration } from "@sitecore/sc-contenthub-webclient-sdk/dist/contracts/querying/entity-load-configuration";
+import { 
+    IContentHubClient, 
+    IExtendedContentHubClient, 
+    ICultureInsensitiveProperty, 
+    IEntity, 
+    EntityLoadConfiguration 
+} from "@sitecore/sc-contenthub-webclient-sdk";
+
 import React, { useEffect, useRef } from "react";
 import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
@@ -81,7 +84,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
 
                                 return (
                                     <Box>
-                                        { showPlaceHolder && <Box id="imagePlaceholder" display="flex" justifyContent="center">
+                                        { showPlaceHolder && <Box id="imagePlaceholder" sx={{ display: "flex", justifyContent: "center" }}>
                                             <PhotoIcon style={{
                                                 fontSize: 160,
                                                 width: 160,
@@ -93,7 +96,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
                                         </Box>}
                                         { showFocalPointViewer && <Box id="focalPointViewer">
                                             <Box className="previewFrame">
-                                                <Box id="focalPointContainer" display="inline-block" position="relative">
+                                                <Box id="focalPointContainer" sx={{ display: "inline-block", position: "relative" }}>
                                                     <img ref={previewImage} src={previewImageSrc} onLoad={onPreviewImageLoad} style={{ maxWidth: '100%' }} />
                                                     <canvas ref={focalCanvas} style={{
                                                         width: '100%',
@@ -116,7 +119,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
                                                     Focal point last modified by {focalPointModifiedBy}
                                                 </Typography>
                                             </Box>}
-                                            <Box display="flex" justifyContent="flex-end" marginTop="16px">
+                                            <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
                                                 <Button variant="outlined" color="secondary" disabled={!isEditable} onClick={edit}>{editButtonText}</Button>
                                                 <Box sx={{ m: 1 }} />
                                                 <Button variant="outlined" color="primary" disabled={isLocked} onClick={save}>Save</Button>
