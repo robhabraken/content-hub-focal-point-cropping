@@ -67,7 +67,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
         return () => {
             window.removeEventListener('resize', resize);
           }
-    });
+    }, []);
 
     return (
         <ThemeProvider theme={context.theme}>

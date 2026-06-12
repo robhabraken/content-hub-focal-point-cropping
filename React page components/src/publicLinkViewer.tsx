@@ -33,7 +33,7 @@ export const PublicLinkViewer = ({ context, client }: { context: IContentHubCont
                     setIsLoaded(true);
                 });
         }
-    });
+    }, []);
 
     function refresh() {
         setIsLoading(false);
