@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useRef } from "react";
 import useState from 'react-usestateref';
 import ErrorBoundary from "./errorBoundary";
-import { Box, Button, CircularProgress, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, ThemeProvider, Typography, createTheme } from "@mui/material";
 import PhotoIcon from '@mui/icons-material/Photo';
 import { ContentHubPageProps, IContentHubContext, IMainFile } from "./types";
 
@@ -70,7 +70,7 @@ export const FocalPointEditor = ({ context, client }: { context: IContentHubCont
     }, []);
 
     return (
-        <ThemeProvider theme={context.theme}>
+        <ThemeProvider theme={createTheme(context.theme)}>
             <ErrorBoundary>
                 <OptionsContext.Provider value={context.options}>
                     <OptionsContext.Consumer>
