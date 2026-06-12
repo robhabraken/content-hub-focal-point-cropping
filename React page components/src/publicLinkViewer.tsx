@@ -17,29 +17,25 @@ const OptionsContext = React.createContext<ContentHubPageProps>(new ContentHubPa
 
 export const PublicLinkViewer = ({ context, client }: { context: IContentHubContext, client: IExtendedContentHubClient }) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [publicLinkQueryResult, setPublicLinkQueryResult] = useState<IEntity[]>();
     const [renditions, setRenditions] = useState<{ [id: string]: IRendition }>();
 
-    useEffect(() => {
-        if (!isLoading) {
-            setIsLoading(true);
-
-            console.log("Loading public links");
-            loadPublicLinks(client, context.options.entityId)
-                .then(publicLinks => {
-                    console.log("Public links loaded")
-                    setPublicLinkQueryResult(publicLinks);
-                    setIsLoaded(true);
-                });
-        }
-    }, []);
-
-    function refresh() {
-        setIsLoading(false);
+    const fetchData = () => {
         setIsLoaded(false);
         setPublicLinkQueryResult(undefined);
-    }
+
+        console.log("Loading public links");
+        loadPublicLinks(client, context.options.entityId)
+            .then(publicLinks => {
+                console.log("Public links loaded")
+                setPublicLinkQueryResult(publicLinks);
+                setIsLoaded(true);
+            });
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <ThemeProvider theme={context.theme}>
@@ -57,7 +53,7 @@ export const PublicLinkViewer = ({ context, client }: { context: IContentHubCont
                                 return (
                                     <Box>
                                         <Typography variant="caption">
-                                            {publicLinkQueryResult?.length} items <Button aria-label="Refresh" data-tip="Refresh" data-for="toolTipComponent" data-place="top" variant="text" color="inherit" size="small" startIcon={<RefreshIcon />} onClick={refresh} />
+                                            {publicLinkQueryResult?.length} items <Button aria-label="Refresh" data-tip="Refresh" data-for="toolTipComponent" data-place="top" variant="text" color="inherit" size="small" startIcon={<RefreshIcon />} onClick={fetchData} />
                                         </Typography>
 
                                         <TableContainer>

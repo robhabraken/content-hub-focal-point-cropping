@@ -6,7 +6,9 @@ Change log:
 * v3.5 (Jun 12, 2026) has the following changes:
   - Update node depedencies and solved vulnerabilities
   - Improved MUI styling property syntax
-  - Changed to bundler module resolution with root level imports 
+  - Changed to bundler module resolution with root level imports
+  - Fixed issue causing infinite loop: useEffect dependency array was missing in React components
+  - Improved refresh logic in public link viewer after correcting useEffect behavior
 * v3.4.1 (Mar 3, 2025) has the following new feature:
   - The 'edit' button of the focal point cropping component will only be enabled for users that have update permissions on the current asset to avoid confusion (for earlier versions, the functionality was enabled for everyone but just didn't save the new focal point)
   - Updated node dependencies, solved vulnerabilities, and added workaround to solve issue #26
