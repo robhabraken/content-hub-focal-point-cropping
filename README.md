@@ -5,7 +5,7 @@ This extension adds focal point cropping functionality to Content Hub. This cons
 Change log:
 * v3.5 (Jun 12, 2026) has the following changes:
   - Update node depedencies and solved vulnerabilities
-  - Improved MUI styling property syntax
+  - Improved MUI styling property syntax, including default theme creation for the focal point editor
   - Changed to bundler module resolution with root level imports
   - Fixed issue causing infinite loop: useEffect dependency array was missing in React components
   - Improved refresh logic in public link viewer after correcting useEffect behavior
