@@ -1,8 +1,10 @@
-# Content Hub - Focal point cropping v3.5
+# Content Hub - Focal point cropping v3.6
 
 This extension adds focal point cropping functionality to Content Hub. This consists of additional asset data (the focal point), an external page component to visually select the desired focal point on the asset preview image, and functionality to automatically generate a number of public link croppings based on the chosen focal point. On top of that, to have a convenient overview of the available croppings and the effect of the chosen focal point, I have built an external page component that shows a clickable preview of all available public links of the asset.
 
 Change log:
+* v3.6 (Jul 22, 2026) has the following changes:
+  - Update node dependencies including upgrade to TypesScript 7
 * v3.5 (Jun 12, 2026) has the following changes:
   - Update node depedencies and solved vulnerabilities
   - Improved MUI styling property syntax, including default theme creation for the focal point editor

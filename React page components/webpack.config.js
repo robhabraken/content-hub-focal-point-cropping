@@ -12,8 +12,27 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: 'ts-loader',
                 exclude: /node_modules/,
+                use: {
+                    loader: 'swc-loader',
+                    options: {
+                        jsc: {
+                            parser: {
+                                syntax: 'typescript',
+                                tsx: true,
+                            },
+                            transform: {
+                                react: {
+                                    runtime: 'classic', // matches tsconfig "jsx": "react"
+                                },
+                            },
+                            target: 'es2018',
+                        },
+                        module: {
+                            type: 'es6',
+                        },
+                    },
+                },
             },
             {
                 test: /\.m?js$/,

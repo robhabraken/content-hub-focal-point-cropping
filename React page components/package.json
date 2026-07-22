@@ -5,30 +5,33 @@
   "license": "MIT",
   "scripts": {
     "start": "http-server dist --cors=* --gzip --proxy=http://localhost:8095",
+    "typecheck": "tsc --noEmit",
     "watch": "webpack --mode development --watch",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "build:check": "npm run typecheck && npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^9.1.1",
-    "@mui/material": "^9.1.1",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
     "@sitecore/sc-contenthub-webclient-sdk": "^1.2.116",
     "@types/color": "^4.2.1",
     "color": "^5.0.3",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "react-usestateref": "^2.0.0",
-    "webpack": "^5.107.2"
+    "webpack": "^5.108.4"
   },
   "devDependencies": {
+    "@swc/core": "^1.15.46",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint-plugin-react-hooks": "^7.1.1",
     "http-server": "^14.1.1",
-    "ts-loader": "^9.6.0",
-    "typescript": "^6.0.3",
-    "webpack-cli": "^7.0.3"
+    "swc-loader": "^0.2.7",
+    "typescript": "^7.0.2",
+    "webpack-cli": "^7.2.1"
   }
 }
